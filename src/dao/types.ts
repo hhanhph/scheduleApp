@@ -26,17 +26,27 @@ export type AdditionalEntityFields = {
 export type Mutation = {
   createSchedule: Schedule;
   createTodo: TodoMvc;
+  deleteSchedule: Schedule;
+  updateSchedule?: Maybe<Schedule>;
   updateTodo?: Maybe<TodoMvc>;
 };
 
 export type MutationCreateScheduleArgs = {
-  endDate: Scalars["Date"];
-  startDate: Scalars["Date"];
+  scheduleDate: Scalars["String"];
   title: Scalars["String"];
 };
 
 export type MutationCreateTodoArgs = {
   description: Scalars["String"];
+};
+
+export type MutationDeleteScheduleArgs = {
+  scheduleId: Scalars["ID"];
+};
+
+export type MutationUpdateScheduleArgs = {
+  data: UpdateScheduleInput;
+  scheduleId: Scalars["ID"];
 };
 
 export type MutationUpdateTodoArgs = {
@@ -45,9 +55,14 @@ export type MutationUpdateTodoArgs = {
 };
 
 export type Query = {
+  Appointment?: Maybe<Schedule>;
   Todo?: Maybe<TodoMvc>;
   allSchedules: Array<Schedule>;
   allTodos: Array<TodoMvc>;
+};
+
+export type QueryAppointmentArgs = {
+  scheduleId: Scalars["ID"];
 };
 
 export type QueryTodoArgs = {
@@ -55,9 +70,8 @@ export type QueryTodoArgs = {
 };
 
 export type Schedule = {
-  endDate?: Maybe<Scalars["Date"]>;
+  scheduleDate: Scalars["String"];
   scheduleId: Scalars["ID"];
-  startDate?: Maybe<Scalars["Date"]>;
   title: Scalars["String"];
 };
 
@@ -67,6 +81,10 @@ export type TodoMvc = {
   todoId: Scalars["ID"];
 };
 
+export type UpdateScheduleInput = {
+  title: Scalars["String"];
+};
+
 export type UpdateTodoInput = {
   completed?: Maybe<Scalars["Boolean"]>;
   description?: Maybe<Scalars["String"]>;
@@ -74,9 +92,8 @@ export type UpdateTodoInput = {
 
 import { ObjectId } from "mongodb";
 export type ScheduleDbObject = {
-  endDate?: Maybe<any>;
+  scheduleDate: string;
   _id: ObjectId;
-  startDate?: Maybe<any>;
   title: string;
 };
 

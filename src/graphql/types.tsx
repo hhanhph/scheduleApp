@@ -33,17 +33,27 @@ export type Scalars = {
 export type Mutation = {
   createSchedule: Schedule;
   createTodo: TodoMvc;
+  deleteSchedule: Schedule;
+  updateSchedule?: Maybe<Schedule>;
   updateTodo?: Maybe<TodoMvc>;
 };
 
 export type MutationCreateScheduleArgs = {
-  endDate: Scalars["Date"];
-  startDate: Scalars["Date"];
+  scheduleDate: Scalars["String"];
   title: Scalars["String"];
 };
 
 export type MutationCreateTodoArgs = {
   description: Scalars["String"];
+};
+
+export type MutationDeleteScheduleArgs = {
+  scheduleId: Scalars["ID"];
+};
+
+export type MutationUpdateScheduleArgs = {
+  data: UpdateScheduleInput;
+  scheduleId: Scalars["ID"];
 };
 
 export type MutationUpdateTodoArgs = {
@@ -52,9 +62,14 @@ export type MutationUpdateTodoArgs = {
 };
 
 export type Query = {
+  Appointment?: Maybe<Schedule>;
   Todo?: Maybe<TodoMvc>;
   allSchedules: Array<Schedule>;
   allTodos: Array<TodoMvc>;
+};
+
+export type QueryAppointmentArgs = {
+  scheduleId: Scalars["ID"];
 };
 
 export type QueryTodoArgs = {
@@ -62,9 +77,8 @@ export type QueryTodoArgs = {
 };
 
 export type Schedule = {
-  endDate?: Maybe<Scalars["Date"]>;
+  scheduleDate: Scalars["String"];
   scheduleId: Scalars["ID"];
-  startDate?: Maybe<Scalars["Date"]>;
   title: Scalars["String"];
 };
 
@@ -72,6 +86,10 @@ export type TodoMvc = {
   completed: Scalars["Boolean"];
   description: Scalars["String"];
   todoId: Scalars["ID"];
+};
+
+export type UpdateScheduleInput = {
+  title: Scalars["String"];
 };
 
 export type UpdateTodoInput = {
@@ -194,6 +212,7 @@ export type ResolversTypes = {
   Schedule: ResolverTypeWrapper<Schedule>;
   String: ResolverTypeWrapper<Scalars["String"]>;
   TodoMVC: ResolverTypeWrapper<TodoMvc>;
+  UpdateScheduleInput: UpdateScheduleInput;
   UpdateTodoInput: UpdateTodoInput;
 };
 
@@ -207,6 +226,7 @@ export type ResolversParentTypes = {
   Schedule: Schedule;
   String: Scalars["String"];
   TodoMVC: TodoMvc;
+  UpdateScheduleInput: UpdateScheduleInput;
   UpdateTodoInput: UpdateTodoInput;
 };
 
@@ -223,13 +243,25 @@ export type MutationResolvers<
     ResolversTypes["Schedule"],
     ParentType,
     ContextType,
-    RequireFields<MutationCreateScheduleArgs, "endDate" | "startDate" | "title">
+    RequireFields<MutationCreateScheduleArgs, "scheduleDate" | "title">
   >;
   createTodo?: Resolver<
     ResolversTypes["TodoMVC"],
     ParentType,
     ContextType,
     RequireFields<MutationCreateTodoArgs, "description">
+  >;
+  deleteSchedule?: Resolver<
+    ResolversTypes["Schedule"],
+    ParentType,
+    ContextType,
+    RequireFields<MutationDeleteScheduleArgs, "scheduleId">
+  >;
+  updateSchedule?: Resolver<
+    Maybe<ResolversTypes["Schedule"]>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateScheduleArgs, "data" | "scheduleId">
   >;
   updateTodo?: Resolver<
     Maybe<ResolversTypes["TodoMVC"]>,
@@ -243,6 +275,12 @@ export type QueryResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = {
+  Appointment?: Resolver<
+    Maybe<ResolversTypes["Schedule"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryAppointmentArgs, "scheduleId">
+  >;
   Todo?: Resolver<
     Maybe<ResolversTypes["TodoMVC"]>,
     ParentType,
@@ -265,9 +303,8 @@ export type ScheduleResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["Schedule"] = ResolversParentTypes["Schedule"]
 > = {
-  endDate?: Resolver<Maybe<ResolversTypes["Date"]>, ParentType, ContextType>;
+  scheduleDate?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   scheduleId?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
-  startDate?: Resolver<Maybe<ResolversTypes["Date"]>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -300,17 +337,45 @@ export type IndexCreateTodoMutationVariables = Exact<{
 
 export type IndexCreateTodoMutation = { createTodo: { todoId: string } };
 
-export type AllSchedulesQueryVariables = Exact<{ [key: string]: never }>;
+export type GetSchedulesQueryVariables = Exact<{ [key: string]: never }>;
 
-export type AllSchedulesQuery = { allSchedules: Array<{ scheduleId: string }> };
+export type GetSchedulesQuery = {
+  allSchedules: Array<{ scheduleId: string; title: string }>;
+};
 
-export type CreateScheduleMutationVariables = Exact<{
+export type IndexCreateScheduleMutationVariables = Exact<{
   title: Scalars["String"];
-  startDate: Scalars["Date"];
-  endDate: Scalars["Date"];
+  scheduleDate: Scalars["String"];
 }>;
 
-export type CreateScheduleMutation = { createSchedule: { scheduleId: string } };
+export type IndexCreateScheduleMutation = {
+  createSchedule: { scheduleId: string };
+};
+
+export type AppointmentQueryVariables = Exact<{
+  scheduleId: Scalars["ID"];
+}>;
+
+export type AppointmentQuery = {
+  Appointment?: { title: string; scheduleDate: string } | null | undefined;
+};
+
+export type DeleteScheduleMutationVariables = Exact<{
+  scheduleId: Scalars["ID"];
+}>;
+
+export type DeleteScheduleMutation = {
+  deleteSchedule: { title: string; scheduleDate: string };
+};
+
+export type UpdateScheduleMutationVariables = Exact<{
+  scheduleId: Scalars["ID"];
+  data: UpdateScheduleInput;
+}>;
+
+export type UpdateScheduleMutation = {
+  updateSchedule?: { title: string } | null | undefined;
+};
 
 export type TodoQueryVariables = Exact<{
   todoId: Scalars["ID"];
@@ -433,115 +498,276 @@ export type IndexCreateTodoMutationOptions =
     IndexCreateTodoMutation,
     IndexCreateTodoMutationVariables
   >;
-export const AllSchedulesDocument = gql`
-  query AllSchedules {
+export const GetSchedulesDocument = gql`
+  query GetSchedules {
     allSchedules {
       scheduleId
+      title
     }
   }
 `;
 
 /**
- * __useAllSchedulesQuery__
+ * __useGetSchedulesQuery__
  *
- * To run a query within a React component, call `useAllSchedulesQuery` and pass it any options that fit your needs.
- * When your component renders, `useAllSchedulesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetSchedulesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSchedulesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAllSchedulesQuery({
+ * const { data, loading, error } = useGetSchedulesQuery({
  *   variables: {
  *   },
  * });
  */
-export function useAllSchedulesQuery(
+export function useGetSchedulesQuery(
   baseOptions?: ApolloReactHooks.QueryHookOptions<
-    AllSchedulesQuery,
-    AllSchedulesQueryVariables
+    GetSchedulesQuery,
+    GetSchedulesQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return ApolloReactHooks.useQuery<
-    AllSchedulesQuery,
-    AllSchedulesQueryVariables
-  >(AllSchedulesDocument, options);
+    GetSchedulesQuery,
+    GetSchedulesQueryVariables
+  >(GetSchedulesDocument, options);
 }
-export function useAllSchedulesLazyQuery(
+export function useGetSchedulesLazyQuery(
   baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
-    AllSchedulesQuery,
-    AllSchedulesQueryVariables
+    GetSchedulesQuery,
+    GetSchedulesQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return ApolloReactHooks.useLazyQuery<
-    AllSchedulesQuery,
-    AllSchedulesQueryVariables
-  >(AllSchedulesDocument, options);
+    GetSchedulesQuery,
+    GetSchedulesQueryVariables
+  >(GetSchedulesDocument, options);
 }
-export type AllSchedulesQueryHookResult = ReturnType<
-  typeof useAllSchedulesQuery
+export type GetSchedulesQueryHookResult = ReturnType<
+  typeof useGetSchedulesQuery
 >;
-export type AllSchedulesLazyQueryHookResult = ReturnType<
-  typeof useAllSchedulesLazyQuery
+export type GetSchedulesLazyQueryHookResult = ReturnType<
+  typeof useGetSchedulesLazyQuery
 >;
-export type AllSchedulesQueryResult = ApolloReactCommon.QueryResult<
-  AllSchedulesQuery,
-  AllSchedulesQueryVariables
+export type GetSchedulesQueryResult = ApolloReactCommon.QueryResult<
+  GetSchedulesQuery,
+  GetSchedulesQueryVariables
 >;
-export const CreateScheduleDocument = gql`
-  mutation CreateSchedule($title: String!, $startDate: Date!, $endDate: Date!) {
-    createSchedule(title: $title, startDate: $startDate, endDate: $endDate) {
+export const IndexCreateScheduleDocument = gql`
+  mutation IndexCreateSchedule($title: String!, $scheduleDate: String!) {
+    createSchedule(title: $title, scheduleDate: $scheduleDate) {
       scheduleId
     }
   }
 `;
-export type CreateScheduleMutationFn = ApolloReactCommon.MutationFunction<
-  CreateScheduleMutation,
-  CreateScheduleMutationVariables
+export type IndexCreateScheduleMutationFn = ApolloReactCommon.MutationFunction<
+  IndexCreateScheduleMutation,
+  IndexCreateScheduleMutationVariables
 >;
 
 /**
- * __useCreateScheduleMutation__
+ * __useIndexCreateScheduleMutation__
  *
- * To run a mutation, you first call `useCreateScheduleMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateScheduleMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useIndexCreateScheduleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useIndexCreateScheduleMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createScheduleMutation, { data, loading, error }] = useCreateScheduleMutation({
+ * const [indexCreateScheduleMutation, { data, loading, error }] = useIndexCreateScheduleMutation({
  *   variables: {
  *      title: // value for 'title'
- *      startDate: // value for 'startDate'
- *      endDate: // value for 'endDate'
+ *      scheduleDate: // value for 'scheduleDate'
  *   },
  * });
  */
-export function useCreateScheduleMutation(
+export function useIndexCreateScheduleMutation(
   baseOptions?: ApolloReactHooks.MutationHookOptions<
-    CreateScheduleMutation,
-    CreateScheduleMutationVariables
+    IndexCreateScheduleMutation,
+    IndexCreateScheduleMutationVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return ApolloReactHooks.useMutation<
-    CreateScheduleMutation,
-    CreateScheduleMutationVariables
-  >(CreateScheduleDocument, options);
+    IndexCreateScheduleMutation,
+    IndexCreateScheduleMutationVariables
+  >(IndexCreateScheduleDocument, options);
 }
-export type CreateScheduleMutationHookResult = ReturnType<
-  typeof useCreateScheduleMutation
+export type IndexCreateScheduleMutationHookResult = ReturnType<
+  typeof useIndexCreateScheduleMutation
 >;
-export type CreateScheduleMutationResult =
-  ApolloReactCommon.MutationResult<CreateScheduleMutation>;
-export type CreateScheduleMutationOptions =
+export type IndexCreateScheduleMutationResult =
+  ApolloReactCommon.MutationResult<IndexCreateScheduleMutation>;
+export type IndexCreateScheduleMutationOptions =
   ApolloReactCommon.BaseMutationOptions<
-    CreateScheduleMutation,
-    CreateScheduleMutationVariables
+    IndexCreateScheduleMutation,
+    IndexCreateScheduleMutationVariables
+  >;
+export const AppointmentDocument = gql`
+  query Appointment($scheduleId: ID!) {
+    Appointment(scheduleId: $scheduleId) {
+      title
+      scheduleDate
+    }
+  }
+`;
+
+/**
+ * __useAppointmentQuery__
+ *
+ * To run a query within a React component, call `useAppointmentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAppointmentQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAppointmentQuery({
+ *   variables: {
+ *      scheduleId: // value for 'scheduleId'
+ *   },
+ * });
+ */
+export function useAppointmentQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    AppointmentQuery,
+    AppointmentQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useQuery<AppointmentQuery, AppointmentQueryVariables>(
+    AppointmentDocument,
+    options
+  );
+}
+export function useAppointmentLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    AppointmentQuery,
+    AppointmentQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useLazyQuery<
+    AppointmentQuery,
+    AppointmentQueryVariables
+  >(AppointmentDocument, options);
+}
+export type AppointmentQueryHookResult = ReturnType<typeof useAppointmentQuery>;
+export type AppointmentLazyQueryHookResult = ReturnType<
+  typeof useAppointmentLazyQuery
+>;
+export type AppointmentQueryResult = ApolloReactCommon.QueryResult<
+  AppointmentQuery,
+  AppointmentQueryVariables
+>;
+export const DeleteScheduleDocument = gql`
+  mutation DeleteSchedule($scheduleId: ID!) {
+    deleteSchedule(scheduleId: $scheduleId) {
+      title
+      scheduleDate
+    }
+  }
+`;
+export type DeleteScheduleMutationFn = ApolloReactCommon.MutationFunction<
+  DeleteScheduleMutation,
+  DeleteScheduleMutationVariables
+>;
+
+/**
+ * __useDeleteScheduleMutation__
+ *
+ * To run a mutation, you first call `useDeleteScheduleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteScheduleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteScheduleMutation, { data, loading, error }] = useDeleteScheduleMutation({
+ *   variables: {
+ *      scheduleId: // value for 'scheduleId'
+ *   },
+ * });
+ */
+export function useDeleteScheduleMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    DeleteScheduleMutation,
+    DeleteScheduleMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    DeleteScheduleMutation,
+    DeleteScheduleMutationVariables
+  >(DeleteScheduleDocument, options);
+}
+export type DeleteScheduleMutationHookResult = ReturnType<
+  typeof useDeleteScheduleMutation
+>;
+export type DeleteScheduleMutationResult =
+  ApolloReactCommon.MutationResult<DeleteScheduleMutation>;
+export type DeleteScheduleMutationOptions =
+  ApolloReactCommon.BaseMutationOptions<
+    DeleteScheduleMutation,
+    DeleteScheduleMutationVariables
+  >;
+export const UpdateScheduleDocument = gql`
+  mutation UpdateSchedule($scheduleId: ID!, $data: UpdateScheduleInput!) {
+    updateSchedule(scheduleId: $scheduleId, data: $data) {
+      title
+    }
+  }
+`;
+export type UpdateScheduleMutationFn = ApolloReactCommon.MutationFunction<
+  UpdateScheduleMutation,
+  UpdateScheduleMutationVariables
+>;
+
+/**
+ * __useUpdateScheduleMutation__
+ *
+ * To run a mutation, you first call `useUpdateScheduleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateScheduleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateScheduleMutation, { data, loading, error }] = useUpdateScheduleMutation({
+ *   variables: {
+ *      scheduleId: // value for 'scheduleId'
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUpdateScheduleMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdateScheduleMutation,
+    UpdateScheduleMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return ApolloReactHooks.useMutation<
+    UpdateScheduleMutation,
+    UpdateScheduleMutationVariables
+  >(UpdateScheduleDocument, options);
+}
+export type UpdateScheduleMutationHookResult = ReturnType<
+  typeof useUpdateScheduleMutation
+>;
+export type UpdateScheduleMutationResult =
+  ApolloReactCommon.MutationResult<UpdateScheduleMutation>;
+export type UpdateScheduleMutationOptions =
+  ApolloReactCommon.BaseMutationOptions<
+    UpdateScheduleMutation,
+    UpdateScheduleMutationVariables
   >;
 export const TodoDocument = gql`
   query Todo($todoId: ID!) {

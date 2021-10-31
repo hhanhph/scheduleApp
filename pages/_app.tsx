@@ -1,6 +1,7 @@
 import '../styles/globals.css'
+import './styles.ts'
 import type { AppProps } from 'next/app'
-
+import './styles'
 import {
   ApolloProvider,
   ApolloClient,

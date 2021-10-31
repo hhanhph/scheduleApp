@@ -1,18 +1,25 @@
 type Query {
   allTodos: [TodoMVC!]!
   Todo(todoId: ID!): TodoMVC
+  Appointment(scheduleId: ID!): Schedule
   allSchedules: [Schedule!]!
 }
 
 type Mutation {
   createTodo(description: String!): TodoMVC!
   updateTodo(todoId: ID!, data: UpdateTodoInput!): TodoMVC
-  createSchedule(title: String!,startDate: Date!,endDate: Date!): Schedule!
+  createSchedule(title: String!,scheduleDate: String!): Schedule!
+  updateSchedule(scheduleId: ID!, data: UpdateScheduleInput!): Schedule
+  deleteSchedule(scheduleId: ID!): Schedule!
 }
 
 input UpdateTodoInput {
   description: String
   completed: Boolean
+}
+
+input UpdateScheduleInput{
+title: String!
 }
 
 type TodoMVC @entity {
@@ -24,6 +31,5 @@ scalar Date
 type Schedule @entity {
 scheduleId: ID! @id
 title: String! @column,
- startDate: Date @column,
-endDate: Date @column
+scheduleDate: String! @column
 }
