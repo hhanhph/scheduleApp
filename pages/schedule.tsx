@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import {
-  useGetSchedulesQuery,
+  useGetScheduleQuery,
   useIndexCreateScheduleMutation,
 } from "../src/graphql/types";
 import ReactHorizontalDatePicker from "react-horizontal-strip-datepicker";
@@ -11,9 +11,15 @@ import { gql } from "@apollo/client";
 import Schedule from '../src/components/Schedule'
 
 const SchedulePage = () => {
-  const { data, loading } = useGetSchedulesQuery();
   const defaultDate = new Date();
   const [currDate, setCurrDate] = React.useState(String(defaultDate));
+  const { data, loading } = useGetScheduleQuery({
+    variables: {
+      scheduleDate:currDate,
+    },
+  });
+ 
+ 
   const [appointment, setAppointment] = React.useState("");
   const [schedulesId, setSchedulesId] = React.useState<string[]>();
   const [schedules,setSchedules]=React.useState<any>()
@@ -21,7 +27,8 @@ const SchedulePage = () => {
   const [createSchedule] = useIndexCreateScheduleMutation();
   const onSelectedDay = (d: any) => {
     d = moment(d).format("DD-MM-YYYY");
-    setCurrDate(String(d));
+    setCurrDate(d);
+    console.log("Today is "+currDate.localeCompare('06-11-2021'))
   };
 
   const fillScheduleIds = (data: string[]) => {
@@ -29,11 +36,16 @@ const SchedulePage = () => {
   };
 
   useEffect(() => {
-    data?.allSchedules &&
-      fillScheduleIds(data?.allSchedules?.map((t:any) => t.scheduleId));
-      data?.allSchedules &&
-      setSchedules(data.allSchedules);
-  }, [data?.allSchedules]);
+    data?.getSchedules &&
+      fillScheduleIds(data?.getSchedules?.map((t:any) => t.scheduleId));
+      data?.getSchedules &&
+      setSchedules(data.getSchedules);
+  }, [data?.getSchedules]);
+
+  useEffect(()=>{
+    console.log("changed date")
+    console.log(currDate)
+  },[currDate])
 
   const onClickAddSchedule = async () => {
     const result = await createSchedule({
@@ -69,7 +81,7 @@ const SchedulePage = () => {
         enableScroll={true}
         enableDays={180}
       />
-
+<S.ScheduleWrapper>
       <S.ScheduleContent>
         <S.Edit>
           <S.Input
@@ -85,6 +97,7 @@ const SchedulePage = () => {
         </S.Edit>
       {body}
       </S.ScheduleContent>
+      </S.ScheduleWrapper>
     </S.CalendarWrapper>
   );
 };
@@ -92,10 +105,11 @@ const SchedulePage = () => {
 export default SchedulePage;
 
 gql`
-  query GetSchedules {
-    allSchedules {
+  query GetSchedule($scheduleDate: String!) {
+    getSchedules(scheduleDate: $scheduleDate) {
       scheduleId
       title
+      scheduleDate
     }
   }
   mutation IndexCreateSchedule($title: String!, $scheduleDate: String!) {

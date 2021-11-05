@@ -64,8 +64,8 @@ export type MutationUpdateTodoArgs = {
 export type Query = {
   Appointment?: Maybe<Schedule>;
   Todo?: Maybe<TodoMvc>;
-  allSchedules: Array<Schedule>;
   allTodos: Array<TodoMvc>;
+  getSchedules: Array<Schedule>;
 };
 
 export type QueryAppointmentArgs = {
@@ -74,6 +74,10 @@ export type QueryAppointmentArgs = {
 
 export type QueryTodoArgs = {
   todoId: Scalars["ID"];
+};
+
+export type QueryGetSchedulesArgs = {
+  scheduleDate: Scalars["String"];
 };
 
 export type Schedule = {
@@ -287,15 +291,16 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryTodoArgs, "todoId">
   >;
-  allSchedules?: Resolver<
-    Array<ResolversTypes["Schedule"]>,
-    ParentType,
-    ContextType
-  >;
   allTodos?: Resolver<
     Array<ResolversTypes["TodoMVC"]>,
     ParentType,
     ContextType
+  >;
+  getSchedules?: Resolver<
+    Array<ResolversTypes["Schedule"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetSchedulesArgs, "scheduleDate">
   >;
 };
 
@@ -337,10 +342,16 @@ export type IndexCreateTodoMutationVariables = Exact<{
 
 export type IndexCreateTodoMutation = { createTodo: { todoId: string } };
 
-export type GetSchedulesQueryVariables = Exact<{ [key: string]: never }>;
+export type GetScheduleQueryVariables = Exact<{
+  scheduleDate: Scalars["String"];
+}>;
 
-export type GetSchedulesQuery = {
-  allSchedules: Array<{ scheduleId: string; title: string }>;
+export type GetScheduleQuery = {
+  getSchedules: Array<{
+    scheduleId: string;
+    title: string;
+    scheduleDate: string;
+  }>;
 };
 
 export type IndexCreateScheduleMutationVariables = Exact<{
@@ -498,63 +509,63 @@ export type IndexCreateTodoMutationOptions =
     IndexCreateTodoMutation,
     IndexCreateTodoMutationVariables
   >;
-export const GetSchedulesDocument = gql`
-  query GetSchedules {
-    allSchedules {
+export const GetScheduleDocument = gql`
+  query GetSchedule($scheduleDate: String!) {
+    getSchedules(scheduleDate: $scheduleDate) {
       scheduleId
       title
+      scheduleDate
     }
   }
 `;
 
 /**
- * __useGetSchedulesQuery__
+ * __useGetScheduleQuery__
  *
- * To run a query within a React component, call `useGetSchedulesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetSchedulesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetScheduleQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetScheduleQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetSchedulesQuery({
+ * const { data, loading, error } = useGetScheduleQuery({
  *   variables: {
+ *      scheduleDate: // value for 'scheduleDate'
  *   },
  * });
  */
-export function useGetSchedulesQuery(
-  baseOptions?: ApolloReactHooks.QueryHookOptions<
-    GetSchedulesQuery,
-    GetSchedulesQueryVariables
+export function useGetScheduleQuery(
+  baseOptions: ApolloReactHooks.QueryHookOptions<
+    GetScheduleQuery,
+    GetScheduleQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return ApolloReactHooks.useQuery<
-    GetSchedulesQuery,
-    GetSchedulesQueryVariables
-  >(GetSchedulesDocument, options);
+  return ApolloReactHooks.useQuery<GetScheduleQuery, GetScheduleQueryVariables>(
+    GetScheduleDocument,
+    options
+  );
 }
-export function useGetSchedulesLazyQuery(
+export function useGetScheduleLazyQuery(
   baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
-    GetSchedulesQuery,
-    GetSchedulesQueryVariables
+    GetScheduleQuery,
+    GetScheduleQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return ApolloReactHooks.useLazyQuery<
-    GetSchedulesQuery,
-    GetSchedulesQueryVariables
-  >(GetSchedulesDocument, options);
+    GetScheduleQuery,
+    GetScheduleQueryVariables
+  >(GetScheduleDocument, options);
 }
-export type GetSchedulesQueryHookResult = ReturnType<
-  typeof useGetSchedulesQuery
+export type GetScheduleQueryHookResult = ReturnType<typeof useGetScheduleQuery>;
+export type GetScheduleLazyQueryHookResult = ReturnType<
+  typeof useGetScheduleLazyQuery
 >;
-export type GetSchedulesLazyQueryHookResult = ReturnType<
-  typeof useGetSchedulesLazyQuery
->;
-export type GetSchedulesQueryResult = ApolloReactCommon.QueryResult<
-  GetSchedulesQuery,
-  GetSchedulesQueryVariables
+export type GetScheduleQueryResult = ApolloReactCommon.QueryResult<
+  GetScheduleQuery,
+  GetScheduleQueryVariables
 >;
 export const IndexCreateScheduleDocument = gql`
   mutation IndexCreateSchedule($title: String!, $scheduleDate: String!) {

@@ -2,7 +2,7 @@ type Query {
   allTodos: [TodoMVC!]!
   Todo(todoId: ID!): TodoMVC
   Appointment(scheduleId: ID!): Schedule
-  allSchedules: [Schedule!]!
+  getSchedules(scheduleDate: String!): [Schedule!]!
 }
 
 type Mutation {

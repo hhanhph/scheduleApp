@@ -31,9 +31,10 @@ const resolvers: Resolvers = {
     //   });
     //   return fromDbObject(dbObject);
     // },
-    allSchedules: async () => {
+    getSchedules: async (_: any, {scheduleDate }) => {
         const collection = await getCollection();
-        return await collection.find().map(fromDbObject).toArray()
+        return await collection.find({scheduleDate: scheduleDate}).map(fromDbObject).toArray()
+       
      },
        Appointment: async (_: any, {scheduleId }) => {
       const collection = await getCollection();

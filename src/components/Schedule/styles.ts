@@ -7,7 +7,8 @@ width: 95%;
 min-height: fit-content;
 border: 2px solid white;
 border-radius: 25px;
-margin: 1rem 0;`
+margin: 1rem 0;
+`
 
 export const Button=styled.button`
 max-width:5rem;

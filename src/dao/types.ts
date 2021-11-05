@@ -57,8 +57,8 @@ export type MutationUpdateTodoArgs = {
 export type Query = {
   Appointment?: Maybe<Schedule>;
   Todo?: Maybe<TodoMvc>;
-  allSchedules: Array<Schedule>;
   allTodos: Array<TodoMvc>;
+  getSchedules: Array<Schedule>;
 };
 
 export type QueryAppointmentArgs = {
@@ -67,6 +67,10 @@ export type QueryAppointmentArgs = {
 
 export type QueryTodoArgs = {
   todoId: Scalars["ID"];
+};
+
+export type QueryGetSchedulesArgs = {
+  scheduleDate: Scalars["String"];
 };
 
 export type Schedule = {
@@ -90,15 +94,15 @@ export type UpdateTodoInput = {
   description?: Maybe<Scalars["String"]>;
 };
 
-import { ObjectId } from "mongodb";
+import { ObjectID } from "mongodb";
 export type ScheduleDbObject = {
   scheduleDate: string;
-  _id: ObjectId;
+  _id: ObjectID;
   title: string;
 };
 
 export type TodoMvcDbObject = {
   completed: boolean;
   description: string;
-  _id: ObjectId;
+  _id: ObjectID;
 };
