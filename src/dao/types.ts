@@ -33,6 +33,7 @@ export type Mutation = {
 
 export type MutationCreateScheduleArgs = {
   scheduleDate: Scalars["String"];
+  scheduleTime?: Maybe<Array<Maybe<Scalars["String"]>>>;
   title: Scalars["String"];
 };
 
@@ -76,6 +77,7 @@ export type QueryGetSchedulesArgs = {
 export type Schedule = {
   scheduleDate: Scalars["String"];
   scheduleId: Scalars["ID"];
+  scheduleTime?: Maybe<Array<Maybe<Scalars["String"]>>>;
   title: Scalars["String"];
 };
 
@@ -86,6 +88,7 @@ export type TodoMvc = {
 };
 
 export type UpdateScheduleInput = {
+  scheduleTime?: Maybe<Array<Maybe<Scalars["String"]>>>;
   title: Scalars["String"];
 };
 
@@ -94,15 +97,16 @@ export type UpdateTodoInput = {
   description?: Maybe<Scalars["String"]>;
 };
 
-import { ObjectID } from "mongodb";
+import { ObjectId } from "mongodb";
 export type ScheduleDbObject = {
   scheduleDate: string;
-  _id: ObjectID;
+  _id: ObjectId;
+  scheduleTime?: Maybe<Array<Maybe<string>>>;
   title: string;
 };
 
 export type TodoMvcDbObject = {
   completed: boolean;
   description: string;
-  _id: ObjectID;
+  _id: ObjectId;
 };

@@ -8,7 +8,7 @@ type Query {
 type Mutation {
   createTodo(description: String!): TodoMVC!
   updateTodo(todoId: ID!, data: UpdateTodoInput!): TodoMVC
-  createSchedule(title: String!,scheduleDate: String!): Schedule!
+  createSchedule(title: String!,scheduleDate: String!,scheduleTime:[String]): Schedule!
   updateSchedule(scheduleId: ID!, data: UpdateScheduleInput!): Schedule
   deleteSchedule(scheduleId: ID!): Schedule!
 }
@@ -20,6 +20,7 @@ input UpdateTodoInput {
 
 input UpdateScheduleInput{
 title: String!
+scheduleTime: [String]
 }
 
 type TodoMVC @entity {
@@ -32,4 +33,5 @@ type Schedule @entity {
 scheduleId: ID! @id
 title: String! @column,
 scheduleDate: String! @column
+scheduleTime: [String] @column
 }

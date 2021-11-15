@@ -40,6 +40,7 @@ export type Mutation = {
 
 export type MutationCreateScheduleArgs = {
   scheduleDate: Scalars["String"];
+  scheduleTime?: Maybe<Array<Maybe<Scalars["String"]>>>;
   title: Scalars["String"];
 };
 
@@ -83,6 +84,7 @@ export type QueryGetSchedulesArgs = {
 export type Schedule = {
   scheduleDate: Scalars["String"];
   scheduleId: Scalars["ID"];
+  scheduleTime?: Maybe<Array<Maybe<Scalars["String"]>>>;
   title: Scalars["String"];
 };
 
@@ -93,6 +95,7 @@ export type TodoMvc = {
 };
 
 export type UpdateScheduleInput = {
+  scheduleTime?: Maybe<Array<Maybe<Scalars["String"]>>>;
   title: Scalars["String"];
 };
 
@@ -310,6 +313,11 @@ export type ScheduleResolvers<
 > = {
   scheduleDate?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   scheduleId?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
+  scheduleTime?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes["String"]>>>,
+    ParentType,
+    ContextType
+  >;
   title?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -357,6 +365,7 @@ export type GetScheduleQuery = {
 export type IndexCreateScheduleMutationVariables = Exact<{
   title: Scalars["String"];
   scheduleDate: Scalars["String"];
+  scheduleTime: Array<Maybe<Scalars["String"]>> | Maybe<Scalars["String"]>;
 }>;
 
 export type IndexCreateScheduleMutation = {
@@ -368,7 +377,14 @@ export type AppointmentQueryVariables = Exact<{
 }>;
 
 export type AppointmentQuery = {
-  Appointment?: { title: string; scheduleDate: string } | null | undefined;
+  Appointment?:
+    | {
+        title: string;
+        scheduleDate: string;
+        scheduleTime?: Array<string | null | undefined> | null | undefined;
+      }
+    | null
+    | undefined;
 };
 
 export type DeleteScheduleMutationVariables = Exact<{
@@ -385,7 +401,13 @@ export type UpdateScheduleMutationVariables = Exact<{
 }>;
 
 export type UpdateScheduleMutation = {
-  updateSchedule?: { title: string } | null | undefined;
+  updateSchedule?:
+    | {
+        title: string;
+        scheduleTime?: Array<string | null | undefined> | null | undefined;
+      }
+    | null
+    | undefined;
 };
 
 export type TodoQueryVariables = Exact<{
@@ -568,8 +590,16 @@ export type GetScheduleQueryResult = ApolloReactCommon.QueryResult<
   GetScheduleQueryVariables
 >;
 export const IndexCreateScheduleDocument = gql`
-  mutation IndexCreateSchedule($title: String!, $scheduleDate: String!) {
-    createSchedule(title: $title, scheduleDate: $scheduleDate) {
+  mutation IndexCreateSchedule(
+    $title: String!
+    $scheduleDate: String!
+    $scheduleTime: [String]!
+  ) {
+    createSchedule(
+      title: $title
+      scheduleDate: $scheduleDate
+      scheduleTime: $scheduleTime
+    ) {
       scheduleId
     }
   }
@@ -594,6 +624,7 @@ export type IndexCreateScheduleMutationFn = ApolloReactCommon.MutationFunction<
  *   variables: {
  *      title: // value for 'title'
  *      scheduleDate: // value for 'scheduleDate'
+ *      scheduleTime: // value for 'scheduleTime'
  *   },
  * });
  */
@@ -624,6 +655,7 @@ export const AppointmentDocument = gql`
     Appointment(scheduleId: $scheduleId) {
       title
       scheduleDate
+      scheduleTime
     }
   }
 `;
@@ -732,6 +764,7 @@ export const UpdateScheduleDocument = gql`
   mutation UpdateSchedule($scheduleId: ID!, $data: UpdateScheduleInput!) {
     updateSchedule(scheduleId: $scheduleId, data: $data) {
       title
+      scheduleTime
     }
   }
 `;

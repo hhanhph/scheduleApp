@@ -8,6 +8,7 @@ min-height: fit-content;
 border: 2px solid white;
 border-radius: 25px;
 margin: 1rem 0;
+justify-content: space-between;
 `
 
 export const Button=styled.button`
@@ -22,7 +23,8 @@ color: grey;
 :hover{
     background-color: #FE8F8F;
     color:white;
-}
+};
+margin: 10px
 `
 
 export const Input=styled.input`
@@ -37,4 +39,9 @@ background:linear-gradient(#fff, #fff) center bottom 1px /calc(100% - 10px) 1px 
 } `
 
 export const Content=styled.div`
-flex:4`
+flex:4;
+`
+export const InputWrapper=styled.div`
+display: flex;
+flex-direction: column;
+flex: 4`

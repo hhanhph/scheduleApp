@@ -16,6 +16,7 @@ const fromDbObject = (doc: any): Schedule => ({
   scheduleId: doc._id.toHexString(),
   title: doc.title,
   scheduleDate: doc.scheduleDate,
+  scheduleTime: doc.scheduleTime
 });
 
 const resolvers: Resolvers = {
@@ -45,10 +46,11 @@ const resolvers: Resolvers = {
     },
   },
   Mutation: {
-    createSchedule: async (_: any, { title,scheduleDate }) => {
+    createSchedule: async (_: any, { title,scheduleDate,scheduleTime }) => {
       const data: Omit<ScheduleDbObject, "_id"> = {
         title,
         scheduleDate,
+        scheduleTime 
       };
 
       const collection = await getCollection();

@@ -1,36 +1,14 @@
+import React from "react"
 import { gql } from "@apollo/client";
 import { useAppointmentQuery,useDeleteScheduleMutation,useUpdateScheduleMutation} from "../../graphql/types";
 import { useState,ChangeEvent, useEffect } from "react";
-import debounce from 'lodash.debounce'
+import TimeRangePicker from '@wojtekmaj/react-timerange-picker/dist/entry.nostyle'
+import '@wojtekmaj/react-timerange-picker/dist/TimeRangePicker.css';
 import * as S from './styles'
 
 interface Props {
   scheduleId: string;
 }
-
-
-gql`
-  query Appointment($scheduleId: ID!) {
-    Appointment(scheduleId: $scheduleId) {
-      title
-      scheduleDate
-    }
-  }
-
-  mutation DeleteSchedule($scheduleId: ID!){
-    deleteSchedule(scheduleId: $scheduleId){
-      title
-scheduleDate
-    }
-  }
-
-  mutation UpdateSchedule($scheduleId: ID!, $data: UpdateScheduleInput!) {
-    updateSchedule(scheduleId: $scheduleId, data: $data) {
-      title
-    }
-  }
-
-`;
 
 const Schedule = (props: Props) => {
   const { scheduleId } = props;
@@ -43,6 +21,7 @@ const Schedule = (props: Props) => {
   const[updateSchedule]=useUpdateScheduleMutation()
   const [input,setInput]=useState("")
 const [isEditing,setIsEditing] = useState(false)
+const [value, onChange] = React.useState(['00:00', '00:00']);
   const onDelete=()=>{
    
       deleteSchedule({
@@ -63,13 +42,22 @@ setInput(target.value)
   if(!loading&& data?.Appointment){
     const newTitle= String(data?.Appointment?.title)
   content=(
-  <>{newTitle}</>
+    <>
+  <>{newTitle}</><br/>
+{data?.Appointment.scheduleTime&&<p>{data.Appointment.scheduleTime[0]}-{data.Appointment.scheduleTime[1]}</p>}
+  </>
   )
 }
 useEffect(() => {
   setInput(data?.Appointment?.title||'');
 }, [data?.Appointment?.title]);
-  return <S.Element>{isEditing?<S.Input placeholder={data?.Appointment?.title} onChange={onInputChange}></S.Input>:<S.Content>{content}</S.Content>}
+  return <S.Element>{isEditing?
+    <S.InputWrapper>
+  <S.Input placeholder={data?.Appointment?.title} onChange={onInputChange}></S.Input><TimeRangePicker
+  disableClock={true}
+onChange={onChange}
+value={value}
+/></S.InputWrapper>:<S.Content>{content}</S.Content>}
 <S.Button onClick={onDelete}>Delete</S.Button><S.Button onClick={() => {
     
     
@@ -78,11 +66,13 @@ useEffect(() => {
         variables: {
           scheduleId,
           data: {
-            title:input
+            title:input,
+            scheduleTime: value
           },
         },
       });
       window.location.reload()
+      console.log("Time Value: "+ JSON.stringify(value))
     }
     setIsEditing(!isEditing)
   }
@@ -90,3 +80,28 @@ useEffect(() => {
 };
 
 export default Schedule;
+
+gql`
+  query Appointment($scheduleId: ID!) {
+    Appointment(scheduleId: $scheduleId) {
+      title
+      scheduleDate
+      scheduleTime
+    }
+  }
+
+  mutation DeleteSchedule($scheduleId: ID!){
+    deleteSchedule(scheduleId: $scheduleId){
+      title
+scheduleDate
+    }
+  }
+
+  mutation UpdateSchedule($scheduleId: ID!, $data: UpdateScheduleInput!) {
+    updateSchedule(scheduleId: $scheduleId, data: $data) {
+      title
+      scheduleTime
+    }
+  }
+
+`;
