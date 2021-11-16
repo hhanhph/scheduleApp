@@ -25,20 +25,15 @@ export type AdditionalEntityFields = {
 
 export type Mutation = {
   createSchedule: Schedule;
-  createTodo: TodoMvc;
   deleteSchedule: Schedule;
   updateSchedule?: Maybe<Schedule>;
-  updateTodo?: Maybe<TodoMvc>;
 };
 
 export type MutationCreateScheduleArgs = {
+  imgSource?: Maybe<Scalars["String"]>;
   scheduleDate: Scalars["String"];
   scheduleTime?: Maybe<Array<Maybe<Scalars["String"]>>>;
   title: Scalars["String"];
-};
-
-export type MutationCreateTodoArgs = {
-  description: Scalars["String"];
 };
 
 export type MutationDeleteScheduleArgs = {
@@ -50,15 +45,8 @@ export type MutationUpdateScheduleArgs = {
   scheduleId: Scalars["ID"];
 };
 
-export type MutationUpdateTodoArgs = {
-  data: UpdateTodoInput;
-  todoId: Scalars["ID"];
-};
-
 export type Query = {
   Appointment?: Maybe<Schedule>;
-  Todo?: Maybe<TodoMvc>;
-  allTodos: Array<TodoMvc>;
   getSchedules: Array<Schedule>;
 };
 
@@ -66,25 +54,16 @@ export type QueryAppointmentArgs = {
   scheduleId: Scalars["ID"];
 };
 
-export type QueryTodoArgs = {
-  todoId: Scalars["ID"];
-};
-
 export type QueryGetSchedulesArgs = {
   scheduleDate: Scalars["String"];
 };
 
 export type Schedule = {
+  imgSource?: Maybe<Scalars["String"]>;
   scheduleDate: Scalars["String"];
   scheduleId: Scalars["ID"];
   scheduleTime?: Maybe<Array<Maybe<Scalars["String"]>>>;
   title: Scalars["String"];
-};
-
-export type TodoMvc = {
-  completed: Scalars["Boolean"];
-  description: Scalars["String"];
-  todoId: Scalars["ID"];
 };
 
 export type UpdateScheduleInput = {
@@ -92,21 +71,11 @@ export type UpdateScheduleInput = {
   title: Scalars["String"];
 };
 
-export type UpdateTodoInput = {
-  completed?: Maybe<Scalars["Boolean"]>;
-  description?: Maybe<Scalars["String"]>;
-};
-
-import { ObjectId } from "mongodb";
+import { ObjectID } from "mongodb";
 export type ScheduleDbObject = {
+  imgSource?: Maybe<string>;
   scheduleDate: string;
-  _id: ObjectId;
+  _id: ObjectID;
   scheduleTime?: Maybe<Array<Maybe<string>>>;
   title: string;
-};
-
-export type TodoMvcDbObject = {
-  completed: boolean;
-  description: string;
-  _id: ObjectId;
 };

@@ -28,6 +28,7 @@ const SchedulePage = () => {
  
   const [appointment, setAppointment] = React.useState("");
   const [schedulesId, setSchedulesId] = React.useState<string[]>();
+  const [source, setSource] = React.useState("")
   const [schedules,setSchedules]=React.useState<any>()
   const [value, onChange] = React.useState(['10:00', '11:00']);
  const [height,setHeight] = React.useState<number|string>()
@@ -63,7 +64,8 @@ const SchedulePage = () => {
       variables: {
         title: appointment,
         scheduleDate: currDate,
-        scheduleTime: value
+        scheduleTime: value,
+        imgSource: source
       },
     });
     schedulesId && result.data
@@ -72,6 +74,7 @@ const SchedulePage = () => {
         )
       : "";
     setAppointment("");
+    setSource("")
   };
   const scheduleElements = schedulesId?.map((id) => <Schedule scheduleId={id} key={id} />);
 const handleCapture = (target:HTMLInputElement)=>{
@@ -79,7 +82,9 @@ const handleCapture = (target:HTMLInputElement)=>{
     if (target.files.length !== 0) {
       const file = target.files[0];
       const newUrl = URL.createObjectURL(file);
-      //setSource(newUrl);
+      setSource(newUrl);
+      console.log("meo: "+source)
+      
     }
   }
 }
@@ -92,15 +97,12 @@ const handleCapture = (target:HTMLInputElement)=>{
         </table>
       </>
     ) : (
-      <div>No ToDos!</div>
+      <div>No ToDos!
+      </div>
+     
     );
   return (
     <>
-    <Head>
-
-    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" >
-    </script>
-</Head>
     <S.CalendarWrapper>    
       <ReactHorizontalDatePicker
         selectedDay={onSelectedDay}
@@ -174,8 +176,8 @@ gql`
 
     }
   }
-  mutation IndexCreateSchedule($title: String!, $scheduleDate: String!,$scheduleTime: [String]!) {
-    createSchedule(title: $title, scheduleDate: $scheduleDate, scheduleTime: $scheduleTime) {
+  mutation IndexCreateSchedule($title: String!, $scheduleDate: String!,$scheduleTime: [String]!,$imgSource: String!) {
+    createSchedule(title: $title, scheduleDate: $scheduleDate, scheduleTime: $scheduleTime,imgSource:$imgSource) {
       scheduleId
     }
   }

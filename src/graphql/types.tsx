@@ -32,20 +32,15 @@ export type Scalars = {
 
 export type Mutation = {
   createSchedule: Schedule;
-  createTodo: TodoMvc;
   deleteSchedule: Schedule;
   updateSchedule?: Maybe<Schedule>;
-  updateTodo?: Maybe<TodoMvc>;
 };
 
 export type MutationCreateScheduleArgs = {
+  imgSource?: Maybe<Scalars["String"]>;
   scheduleDate: Scalars["String"];
   scheduleTime?: Maybe<Array<Maybe<Scalars["String"]>>>;
   title: Scalars["String"];
-};
-
-export type MutationCreateTodoArgs = {
-  description: Scalars["String"];
 };
 
 export type MutationDeleteScheduleArgs = {
@@ -57,15 +52,8 @@ export type MutationUpdateScheduleArgs = {
   scheduleId: Scalars["ID"];
 };
 
-export type MutationUpdateTodoArgs = {
-  data: UpdateTodoInput;
-  todoId: Scalars["ID"];
-};
-
 export type Query = {
   Appointment?: Maybe<Schedule>;
-  Todo?: Maybe<TodoMvc>;
-  allTodos: Array<TodoMvc>;
   getSchedules: Array<Schedule>;
 };
 
@@ -73,35 +61,21 @@ export type QueryAppointmentArgs = {
   scheduleId: Scalars["ID"];
 };
 
-export type QueryTodoArgs = {
-  todoId: Scalars["ID"];
-};
-
 export type QueryGetSchedulesArgs = {
   scheduleDate: Scalars["String"];
 };
 
 export type Schedule = {
+  imgSource?: Maybe<Scalars["String"]>;
   scheduleDate: Scalars["String"];
   scheduleId: Scalars["ID"];
   scheduleTime?: Maybe<Array<Maybe<Scalars["String"]>>>;
   title: Scalars["String"];
 };
 
-export type TodoMvc = {
-  completed: Scalars["Boolean"];
-  description: Scalars["String"];
-  todoId: Scalars["ID"];
-};
-
 export type UpdateScheduleInput = {
   scheduleTime?: Maybe<Array<Maybe<Scalars["String"]>>>;
   title: Scalars["String"];
-};
-
-export type UpdateTodoInput = {
-  completed?: Maybe<Scalars["Boolean"]>;
-  description?: Maybe<Scalars["String"]>;
 };
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -218,9 +192,7 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
   Schedule: ResolverTypeWrapper<Schedule>;
   String: ResolverTypeWrapper<Scalars["String"]>;
-  TodoMVC: ResolverTypeWrapper<TodoMvc>;
   UpdateScheduleInput: UpdateScheduleInput;
-  UpdateTodoInput: UpdateTodoInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -232,9 +204,7 @@ export type ResolversParentTypes = {
   Query: {};
   Schedule: Schedule;
   String: Scalars["String"];
-  TodoMVC: TodoMvc;
   UpdateScheduleInput: UpdateScheduleInput;
-  UpdateTodoInput: UpdateTodoInput;
 };
 
 export interface DateScalarConfig
@@ -252,12 +222,6 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationCreateScheduleArgs, "scheduleDate" | "title">
   >;
-  createTodo?: Resolver<
-    ResolversTypes["TodoMVC"],
-    ParentType,
-    ContextType,
-    RequireFields<MutationCreateTodoArgs, "description">
-  >;
   deleteSchedule?: Resolver<
     ResolversTypes["Schedule"],
     ParentType,
@@ -269,12 +233,6 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationUpdateScheduleArgs, "data" | "scheduleId">
-  >;
-  updateTodo?: Resolver<
-    Maybe<ResolversTypes["TodoMVC"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationUpdateTodoArgs, "data" | "todoId">
   >;
 };
 
@@ -288,17 +246,6 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryAppointmentArgs, "scheduleId">
   >;
-  Todo?: Resolver<
-    Maybe<ResolversTypes["TodoMVC"]>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryTodoArgs, "todoId">
-  >;
-  allTodos?: Resolver<
-    Array<ResolversTypes["TodoMVC"]>,
-    ParentType,
-    ContextType
-  >;
   getSchedules?: Resolver<
     Array<ResolversTypes["Schedule"]>,
     ParentType,
@@ -311,6 +258,11 @@ export type ScheduleResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["Schedule"] = ResolversParentTypes["Schedule"]
 > = {
+  imgSource?: Resolver<
+    Maybe<ResolversTypes["String"]>,
+    ParentType,
+    ContextType
+  >;
   scheduleDate?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   scheduleId?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
   scheduleTime?: Resolver<
@@ -322,33 +274,12 @@ export type ScheduleResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type TodoMvcResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes["TodoMVC"] = ResolversParentTypes["TodoMVC"]
-> = {
-  completed?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
-  description?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
-  todoId?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type Resolvers<ContextType = any> = {
   Date?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Schedule?: ScheduleResolvers<ContextType>;
-  TodoMVC?: TodoMvcResolvers<ContextType>;
 };
-
-export type IndexQueryVariables = Exact<{ [key: string]: never }>;
-
-export type IndexQuery = { allTodos: Array<{ todoId: string }> };
-
-export type IndexCreateTodoMutationVariables = Exact<{
-  description: Scalars["String"];
-}>;
-
-export type IndexCreateTodoMutation = { createTodo: { todoId: string } };
 
 export type GetScheduleQueryVariables = Exact<{
   scheduleDate: Scalars["String"];
@@ -366,6 +297,7 @@ export type IndexCreateScheduleMutationVariables = Exact<{
   title: Scalars["String"];
   scheduleDate: Scalars["String"];
   scheduleTime: Array<Maybe<Scalars["String"]>> | Maybe<Scalars["String"]>;
+  imgSource: Scalars["String"];
 }>;
 
 export type IndexCreateScheduleMutation = {
@@ -382,6 +314,7 @@ export type AppointmentQuery = {
         title: string;
         scheduleDate: string;
         scheduleTime?: Array<string | null | undefined> | null | undefined;
+        imgSource?: string | null | undefined;
       }
     | null
     | undefined;
@@ -410,127 +343,6 @@ export type UpdateScheduleMutation = {
     | undefined;
 };
 
-export type TodoQueryVariables = Exact<{
-  todoId: Scalars["ID"];
-}>;
-
-export type TodoQuery = {
-  Todo?: { description: string; completed: boolean } | null | undefined;
-};
-
-export type UpdateTodoMutationVariables = Exact<{
-  todoId: Scalars["ID"];
-  data: UpdateTodoInput;
-}>;
-
-export type UpdateTodoMutation = {
-  updateTodo?: { description: string; completed: boolean } | null | undefined;
-};
-
-export const IndexDocument = gql`
-  query Index {
-    allTodos {
-      todoId
-    }
-  }
-`;
-
-/**
- * __useIndexQuery__
- *
- * To run a query within a React component, call `useIndexQuery` and pass it any options that fit your needs.
- * When your component renders, `useIndexQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useIndexQuery({
- *   variables: {
- *   },
- * });
- */
-export function useIndexQuery(
-  baseOptions?: ApolloReactHooks.QueryHookOptions<
-    IndexQuery,
-    IndexQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return ApolloReactHooks.useQuery<IndexQuery, IndexQueryVariables>(
-    IndexDocument,
-    options
-  );
-}
-export function useIndexLazyQuery(
-  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
-    IndexQuery,
-    IndexQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return ApolloReactHooks.useLazyQuery<IndexQuery, IndexQueryVariables>(
-    IndexDocument,
-    options
-  );
-}
-export type IndexQueryHookResult = ReturnType<typeof useIndexQuery>;
-export type IndexLazyQueryHookResult = ReturnType<typeof useIndexLazyQuery>;
-export type IndexQueryResult = ApolloReactCommon.QueryResult<
-  IndexQuery,
-  IndexQueryVariables
->;
-export const IndexCreateTodoDocument = gql`
-  mutation IndexCreateTodo($description: String!) {
-    createTodo(description: $description) {
-      todoId
-    }
-  }
-`;
-export type IndexCreateTodoMutationFn = ApolloReactCommon.MutationFunction<
-  IndexCreateTodoMutation,
-  IndexCreateTodoMutationVariables
->;
-
-/**
- * __useIndexCreateTodoMutation__
- *
- * To run a mutation, you first call `useIndexCreateTodoMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useIndexCreateTodoMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [indexCreateTodoMutation, { data, loading, error }] = useIndexCreateTodoMutation({
- *   variables: {
- *      description: // value for 'description'
- *   },
- * });
- */
-export function useIndexCreateTodoMutation(
-  baseOptions?: ApolloReactHooks.MutationHookOptions<
-    IndexCreateTodoMutation,
-    IndexCreateTodoMutationVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return ApolloReactHooks.useMutation<
-    IndexCreateTodoMutation,
-    IndexCreateTodoMutationVariables
-  >(IndexCreateTodoDocument, options);
-}
-export type IndexCreateTodoMutationHookResult = ReturnType<
-  typeof useIndexCreateTodoMutation
->;
-export type IndexCreateTodoMutationResult =
-  ApolloReactCommon.MutationResult<IndexCreateTodoMutation>;
-export type IndexCreateTodoMutationOptions =
-  ApolloReactCommon.BaseMutationOptions<
-    IndexCreateTodoMutation,
-    IndexCreateTodoMutationVariables
-  >;
 export const GetScheduleDocument = gql`
   query GetSchedule($scheduleDate: String!) {
     getSchedules(scheduleDate: $scheduleDate) {
@@ -594,11 +406,13 @@ export const IndexCreateScheduleDocument = gql`
     $title: String!
     $scheduleDate: String!
     $scheduleTime: [String]!
+    $imgSource: String!
   ) {
     createSchedule(
       title: $title
       scheduleDate: $scheduleDate
       scheduleTime: $scheduleTime
+      imgSource: $imgSource
     ) {
       scheduleId
     }
@@ -625,6 +439,7 @@ export type IndexCreateScheduleMutationFn = ApolloReactCommon.MutationFunction<
  *      title: // value for 'title'
  *      scheduleDate: // value for 'scheduleDate'
  *      scheduleTime: // value for 'scheduleTime'
+ *      imgSource: // value for 'imgSource'
  *   },
  * });
  */
@@ -656,6 +471,7 @@ export const AppointmentDocument = gql`
       title
       scheduleDate
       scheduleTime
+      imgSource
     }
   }
 `;
@@ -813,107 +629,3 @@ export type UpdateScheduleMutationOptions =
     UpdateScheduleMutation,
     UpdateScheduleMutationVariables
   >;
-export const TodoDocument = gql`
-  query Todo($todoId: ID!) {
-    Todo(todoId: $todoId) {
-      description
-      completed
-    }
-  }
-`;
-
-/**
- * __useTodoQuery__
- *
- * To run a query within a React component, call `useTodoQuery` and pass it any options that fit your needs.
- * When your component renders, `useTodoQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTodoQuery({
- *   variables: {
- *      todoId: // value for 'todoId'
- *   },
- * });
- */
-export function useTodoQuery(
-  baseOptions: ApolloReactHooks.QueryHookOptions<TodoQuery, TodoQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return ApolloReactHooks.useQuery<TodoQuery, TodoQueryVariables>(
-    TodoDocument,
-    options
-  );
-}
-export function useTodoLazyQuery(
-  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
-    TodoQuery,
-    TodoQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return ApolloReactHooks.useLazyQuery<TodoQuery, TodoQueryVariables>(
-    TodoDocument,
-    options
-  );
-}
-export type TodoQueryHookResult = ReturnType<typeof useTodoQuery>;
-export type TodoLazyQueryHookResult = ReturnType<typeof useTodoLazyQuery>;
-export type TodoQueryResult = ApolloReactCommon.QueryResult<
-  TodoQuery,
-  TodoQueryVariables
->;
-export const UpdateTodoDocument = gql`
-  mutation UpdateTodo($todoId: ID!, $data: UpdateTodoInput!) {
-    updateTodo(todoId: $todoId, data: $data) {
-      description
-      completed
-    }
-  }
-`;
-export type UpdateTodoMutationFn = ApolloReactCommon.MutationFunction<
-  UpdateTodoMutation,
-  UpdateTodoMutationVariables
->;
-
-/**
- * __useUpdateTodoMutation__
- *
- * To run a mutation, you first call `useUpdateTodoMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateTodoMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateTodoMutation, { data, loading, error }] = useUpdateTodoMutation({
- *   variables: {
- *      todoId: // value for 'todoId'
- *      data: // value for 'data'
- *   },
- * });
- */
-export function useUpdateTodoMutation(
-  baseOptions?: ApolloReactHooks.MutationHookOptions<
-    UpdateTodoMutation,
-    UpdateTodoMutationVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return ApolloReactHooks.useMutation<
-    UpdateTodoMutation,
-    UpdateTodoMutationVariables
-  >(UpdateTodoDocument, options);
-}
-export type UpdateTodoMutationHookResult = ReturnType<
-  typeof useUpdateTodoMutation
->;
-export type UpdateTodoMutationResult =
-  ApolloReactCommon.MutationResult<UpdateTodoMutation>;
-export type UpdateTodoMutationOptions = ApolloReactCommon.BaseMutationOptions<
-  UpdateTodoMutation,
-  UpdateTodoMutationVariables
->;

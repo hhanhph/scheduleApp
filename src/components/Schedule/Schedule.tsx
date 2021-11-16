@@ -1,6 +1,6 @@
 import React from "react"
 import { gql } from "@apollo/client";
-import { useAppointmentQuery,useDeleteScheduleMutation,useUpdateScheduleMutation} from "../../graphql/types";
+import { AppointmentDocument, useAppointmentQuery,useDeleteScheduleMutation,useUpdateScheduleMutation} from "../../graphql/types";
 import { useState,ChangeEvent, useEffect } from "react";
 import TimeRangePicker from '@wojtekmaj/react-timerange-picker/dist/entry.nostyle'
 import '@wojtekmaj/react-timerange-picker/dist/TimeRangePicker.css';
@@ -44,7 +44,8 @@ setInput(target.value)
   content=(
     <>
   <>{newTitle}</><br/>
-{data?.Appointment.scheduleTime&&<p>{data.Appointment.scheduleTime[0]}-{data.Appointment.scheduleTime[1]}</p>}
+{data?.Appointment.scheduleTime&&<p>{data.Appointment.scheduleTime[0]}-{data.Appointment.scheduleTime[1]} </p>}
+{data?.Appointment.imgSource&&<img src={data.Appointment.imgSource} alt={"snap"}></img>}
   </>
   )
 }
@@ -87,6 +88,7 @@ gql`
       title
       scheduleDate
       scheduleTime
+      imgSource
     }
   }
 

@@ -59,6 +59,8 @@ export default function App({ Component, pageProps }: AppProps) {
         />
         <link rel="apple-touch-icon" href="/apple-icon.png"></link>
         <meta name="theme-color" content="#ffffff" />
+        <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" >
+    </script>
       </Head>
       <ApolloProvider client={client}>
         <Component {...pageProps} />

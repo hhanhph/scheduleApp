@@ -1,9 +1,7 @@
-import { Resolvers, TodoMvc,Schedule } from "./types";
+import { Resolvers, Schedule } from "./types";
 import connectToDatabase from "../dao";
-import { TodoMvcDbObject } from "../dao/types";
 import {ScheduleDbObject} from '../dao/types';
 import { ObjectId } from "mongodb";
-import mongoose from 'mongoose'
 
 const dbPromise = connectToDatabase();
 
@@ -16,7 +14,8 @@ const fromDbObject = (doc: any): Schedule => ({
   scheduleId: doc._id.toHexString(),
   title: doc.title,
   scheduleDate: doc.scheduleDate,
-  scheduleTime: doc.scheduleTime
+  scheduleTime: doc.scheduleTime,
+  imgSource: doc.imgSource
 });
 
 const resolvers: Resolvers = {
@@ -46,11 +45,12 @@ const resolvers: Resolvers = {
     },
   },
   Mutation: {
-    createSchedule: async (_: any, { title,scheduleDate,scheduleTime }) => {
+    createSchedule: async (_: any, { title,scheduleDate,scheduleTime,imgSource }) => {
       const data: Omit<ScheduleDbObject, "_id"> = {
         title,
         scheduleDate,
-        scheduleTime 
+        scheduleTime,
+        imgSource 
       };
 
       const collection = await getCollection();
@@ -61,30 +61,6 @@ const resolvers: Resolvers = {
       });
     },
   
-    // createTodo: async (_: any, { description }) => {
-    //   const data: Omit<TodoMvcDbObject, "_id"> = {
-    //     description,
-    //     completed: false,
-    //   };
-
-    //   const collection = await getCollection();
-    //   const document = await collection.insertOne(data);
-    //   return fromDbObject({
-    //     ...data,
-    //     _id: document.insertedId,
-    //   });
-    // },
-    // updateTodo: async (_: any, { todoId, data }) => {
-    //   const collection = await getCollection();
-    //   const result = await collection.findOneAndUpdate(
-    //     {
-    //       _id: ObjectId.createFromHexString(todoId),
-    //     },
-    //     { $set: data },
-    //   );
-
-    //   return fromDbObject(result.value);
-    // },
     deleteSchedule: async (_:any,{scheduleId})=>{
       const collection= await getCollection();
       const result = await collection.findOneAndDelete({
