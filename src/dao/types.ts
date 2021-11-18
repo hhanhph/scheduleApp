@@ -71,11 +71,11 @@ export type UpdateScheduleInput = {
   title: Scalars["String"];
 };
 
-import { ObjectID } from "mongodb";
+import { ObjectId } from "mongodb";
 export type ScheduleDbObject = {
   imgSource?: Maybe<string>;
   scheduleDate: string;
-  _id: ObjectID;
+  _id: ObjectId;
   scheduleTime?: Maybe<Array<Maybe<string>>>;
   title: string;
 };

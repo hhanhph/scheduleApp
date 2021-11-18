@@ -1,7 +1,5 @@
-import "../styles/globals.css";
 import "../lib/styles.ts";
 import type { AppProps } from "next/app";
-import "../lib/styles";
 import {
   ApolloProvider,
   ApolloClient,
@@ -11,7 +9,7 @@ import {
 
 import fetch from "node-fetch"; // Use node-fetch here to allow SSR
 import React from "react";
-import Head from 'next/head'
+import Head from "next/head";
 
 const client = new ApolloClient({
   link: new HttpLink({ uri: "/api/graphql", fetch: fetch as any }),
@@ -33,8 +31,8 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
   return (
     <>
-    <Head>
-    <meta charSet="utf-8" />
+      <Head>
+        <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta
           name="viewport"
@@ -59,8 +57,7 @@ export default function App({ Component, pageProps }: AppProps) {
         />
         <link rel="apple-touch-icon" href="/apple-icon.png"></link>
         <meta name="theme-color" content="#ffffff" />
-        <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" >
-    </script>
+        <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js"> </script>
       </Head>
       <ApolloProvider client={client}>
         <Component {...pageProps} />

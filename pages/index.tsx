@@ -5,38 +5,27 @@ import {
 } from "../src/graphql/types";
 import ReactHorizontalDatePicker from "react-horizontal-strip-datepicker";
 import "react-horizontal-strip-datepicker/dist/ReactHorizontalDatePicker.css";
-import TimeRangePicker from '@wojtekmaj/react-timerange-picker/dist/entry.nostyle'
-import '@wojtekmaj/react-timerange-picker/dist/TimeRangePicker.css';
- import 'react-clock/dist/Clock.css'; 
- import AnimateHeight from 'react-animate-height';
+import "@wojtekmaj/react-timerange-picker/dist/TimeRangePicker.css";
 
 import * as S from "../lib/styles";
 import moment from "moment";
 import { gql } from "@apollo/client";
-import Schedule from '../src/components/Schedule'
-import Head from "next/head";
+import Schedule from "../src/components/Schedule";
+import EditSection from "../src/components/EditSection/EditSection";
 
 const SchedulePage = () => {
   const defaultDate = new Date();
   const [currDate, setCurrDate] = React.useState(String(defaultDate));
   const { data, loading } = useGetScheduleQuery({
     variables: {
-      scheduleDate:currDate,
+      scheduleDate: currDate,
     },
   });
+
  
- 
-  const [appointment, setAppointment] = React.useState("");
   const [schedulesId, setSchedulesId] = React.useState<string[]>();
-  const [source, setSource] = React.useState("")
-  const [schedules,setSchedules]=React.useState<any>()
-  const [value, onChange] = React.useState(['10:00', '11:00']);
- const [height,setHeight] = React.useState<number|string>()
+  const [schedules, setSchedules] = React.useState<any>();
 
-  const toggle = () => {
-
-    setHeight(height === 0 ? 'auto' : 0);
-  };
   const [createSchedule] = useIndexCreateScheduleMutation();
   const onSelectedDay = (d: any) => {
     d = moment(d).format("DD-MM-YYYY");
@@ -49,23 +38,18 @@ const SchedulePage = () => {
 
   useEffect(() => {
     data?.getSchedules &&
-      fillScheduleIds(data?.getSchedules?.map((t:any) => t.scheduleId));
-      data?.getSchedules &&
-      setSchedules(data.getSchedules);
+      fillScheduleIds(data?.getSchedules?.map((t: any) => t.scheduleId));
+    data?.getSchedules && setSchedules(data.getSchedules);
   }, [data?.getSchedules]);
 
-  useEffect(()=>{
-    setHeight(0)
-
-  },[])
-
-  const onClickAddSchedule = async () => {
+  const onClickAddSchedule = async (appointment:string,value:string[],source:string) => {
+  
     const result = await createSchedule({
       variables: {
         title: appointment,
         scheduleDate: currDate,
         scheduleTime: value,
-        imgSource: source
+        imgSource: source,
       },
     });
     schedulesId && result.data
@@ -73,95 +57,40 @@ const SchedulePage = () => {
           schedulesId.concat(result.data?.createSchedule?.scheduleId)
         )
       : "";
-    setAppointment("");
-    setSource("")
+    
   };
-  const scheduleElements = schedulesId?.map((id) => <Schedule scheduleId={id} key={id} />);
-const handleCapture = (target:HTMLInputElement)=>{
-  if (target.files) {
-    if (target.files.length !== 0) {
-      const file = target.files[0];
-      const newUrl = URL.createObjectURL(file);
-      setSource(newUrl);
-      console.log("meo: "+source)
-      
-    }
-  }
-}
+
+  const scheduleElements = schedulesId?.map((id) => (
+    <Schedule scheduleId={id} key={id} />
+  ));
+
+ 
   const body =
     loading ||
-    typeof scheduleElements === "undefined" ? null : scheduleElements.length > 0 ? (
+    typeof scheduleElements === "undefined" ? null : scheduleElements.length >
+      0 ? (
       <>
         <table>
           <tbody>{scheduleElements}</tbody>
         </table>
       </>
     ) : (
-      <div>No ToDos!
-      </div>
-     
+      <div>No ToDos!</div>
     );
   return (
-    <>
-    <S.CalendarWrapper>    
+    <S.CalendarWrapper>
       <ReactHorizontalDatePicker
         selectedDay={onSelectedDay}
         enableScroll={true}
         enableDays={180}
       />
-<S.ScheduleWrapper>
-
-      <S.ScheduleContent>
-        <S.EditSection>
-        <S.EditButton 
-          aria-expanded={ height !== 0 }
-          aria-controls='example-panel'
-          onClick={toggle}
-        >
-          { height === 0 ? 'Plan new schedule' : 'Close' }
-        </S.EditButton>
-
-        <AnimateHeight
-          id='example-panel'
-          duration={ 500 }
-          height={ height } // see props documentation below
-        >
-     
-        <S.Edit>
-          <S.Input
-            type="text"
-            aria-labelledby="appointmentInput-label"
-            placeholder="Add new appointment here"
-            value={appointment}
-            onChange={(e: React.FormEvent<HTMLInputElement>) =>
-              setAppointment(e.currentTarget.value)
-            }
-          />
-            <TimeRangePicker
-             disableClock={true}
-        onChange={onChange}
-        value={value}
-      />
-      <S.UpImgLabel htmlFor="file-upload">
-    <i></i> Custom Upload
-</S.UpImgLabel>
-         <S.UpImgInput
-            accept="image/*"
-            id="file-upload"
-            type="file"
-            capture="environment"
-            onChange={(e) => handleCapture(e.target)}
-          />
-          <S.Button onClick={onClickAddSchedule}>+</S.Button>
-        </S.Edit>
-        </AnimateHeight>
-        </S.EditSection>
-      {body}
-      </S.ScheduleContent>
-     
+      <S.ScheduleWrapper>
+        <S.ScheduleContent>
+    <EditSection onClickAddSchedule={onClickAddSchedule}/>
+          {body}
+        </S.ScheduleContent>
       </S.ScheduleWrapper>
     </S.CalendarWrapper>
-    </>
   );
 };
 
@@ -173,11 +102,20 @@ gql`
       scheduleId
       title
       scheduleDate
-
     }
   }
-  mutation IndexCreateSchedule($title: String!, $scheduleDate: String!,$scheduleTime: [String]!,$imgSource: String!) {
-    createSchedule(title: $title, scheduleDate: $scheduleDate, scheduleTime: $scheduleTime,imgSource:$imgSource) {
+  mutation IndexCreateSchedule(
+    $title: String!
+    $scheduleDate: String!
+    $scheduleTime: [String]!
+    $imgSource: String!
+  ) {
+    createSchedule(
+      title: $title
+      scheduleDate: $scheduleDate
+      scheduleTime: $scheduleTime
+      imgSource: $imgSource
+    ) {
       scheduleId
     }
   }

@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "types:generate": "graphql-codegen"
+    "types:generate": "graphql-codegen",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@apollo/client": "^3.4.16",
@@ -48,8 +49,14 @@
     "babel-plugin-styled-components": "^1.13.3",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.2",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.0.2",
     "prettier": "^2.4.1",
     "ts-node": "^9.1.1",
     "typescript": "4.4.4"
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
   }
 }

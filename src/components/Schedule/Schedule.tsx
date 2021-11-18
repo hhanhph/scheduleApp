@@ -1,9 +1,10 @@
 import React from "react"
 import { gql } from "@apollo/client";
-import { AppointmentDocument, useAppointmentQuery,useDeleteScheduleMutation,useUpdateScheduleMutation} from "../../graphql/types";
+import { useAppointmentQuery,useDeleteScheduleMutation,useUpdateScheduleMutation} from "../../graphql/types";
 import { useState,ChangeEvent, useEffect } from "react";
 import TimeRangePicker from '@wojtekmaj/react-timerange-picker/dist/entry.nostyle'
 import '@wojtekmaj/react-timerange-picker/dist/TimeRangePicker.css';
+import Image from 'next/image'
 import * as S from './styles'
 
 interface Props {
@@ -45,7 +46,7 @@ setInput(target.value)
     <>
   <>{newTitle}</><br/>
 {data?.Appointment.scheduleTime&&<p>{data.Appointment.scheduleTime[0]}-{data.Appointment.scheduleTime[1]} </p>}
-{data?.Appointment.imgSource&&<img src={data.Appointment.imgSource} alt={"snap"}></img>}
+{data?.Appointment.imgSource&&<Image src={data.Appointment.imgSource} alt={`img-${data.Appointment.imgSource}`} width="50px" height="50px"></Image>}
   </>
   )
 }
