@@ -18,6 +18,16 @@ const client = new ApolloClient({
 // This default export is required
 export default function App({ Component, pageProps }: AppProps) {
   React.useEffect(() => {
+    if(window.indexedDB){
+      console.log('IndexedDB is supported');
+  }
+  var request = window.indexedDB.open("MyTestDatabase", 1);
+  request.onerror = function(event) {
+   console.log("Error creating indexDb")
+  };
+  request.onsuccess = function(event) {
+    console.log("Success creating indexDb")
+  };
     OneSignal.push(function () {
       OneSignal.init({
         appId: "541efcf0-e001-4f95-b7e0-a596777330fb",

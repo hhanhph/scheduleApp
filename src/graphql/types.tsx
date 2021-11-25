@@ -290,6 +290,7 @@ export type GetScheduleQuery = {
     scheduleId: string;
     title: string;
     scheduleDate: string;
+    imgSource?: string | null | undefined;
   }>;
 };
 
@@ -297,7 +298,7 @@ export type IndexCreateScheduleMutationVariables = Exact<{
   title: Scalars["String"];
   scheduleDate: Scalars["String"];
   scheduleTime: Array<Maybe<Scalars["String"]>> | Maybe<Scalars["String"]>;
-  imgSource: Scalars["String"];
+  imgSource?: Maybe<Scalars["String"]>;
 }>;
 
 export type IndexCreateScheduleMutation = {
@@ -349,6 +350,7 @@ export const GetScheduleDocument = gql`
       scheduleId
       title
       scheduleDate
+      imgSource
     }
   }
 `;
@@ -406,7 +408,7 @@ export const IndexCreateScheduleDocument = gql`
     $title: String!
     $scheduleDate: String!
     $scheduleTime: [String]!
-    $imgSource: String!
+    $imgSource: String
   ) {
     createSchedule(
       title: $title

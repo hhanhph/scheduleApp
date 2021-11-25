@@ -10,8 +10,10 @@ import "@wojtekmaj/react-timerange-picker/dist/TimeRangePicker.css";
 import * as S from "../lib/styles";
 import moment from "moment";
 import { gql } from "@apollo/client";
+
 import Schedule from "../src/components/Schedule";
 import EditSection from "../src/components/EditSection/EditSection";
+import ImageCapture from "../src/components/ImageCapture";
 
 const SchedulePage = () => {
   const defaultDate = new Date();
@@ -43,7 +45,7 @@ const SchedulePage = () => {
   }, [data?.getSchedules]);
 
   const onClickAddSchedule = async (appointment:string,value:string[],source:string) => {
-  
+  console.log("URL image source: "+source)
     const result = await createSchedule({
       variables: {
         title: appointment,
@@ -90,6 +92,7 @@ const SchedulePage = () => {
           {body}
         </S.ScheduleContent>
       </S.ScheduleWrapper>
+      <ImageCapture/>
     </S.CalendarWrapper>
   );
 };
@@ -102,13 +105,14 @@ gql`
       scheduleId
       title
       scheduleDate
+      imgSource
     }
   }
   mutation IndexCreateSchedule(
     $title: String!
     $scheduleDate: String!
     $scheduleTime: [String]!
-    $imgSource: String!
+    $imgSource: String
   ) {
     createSchedule(
       title: $title

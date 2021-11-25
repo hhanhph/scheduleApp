@@ -42,11 +42,13 @@ setInput(target.value)
 
   if(!loading&& data?.Appointment){
     const newTitle= String(data?.Appointment?.title)
+    const image =  (String(data?.Appointment?.imgSource))
+    console.log("Image: "+image)
   content=(
     <>
   <>{newTitle}</><br/>
 {data?.Appointment.scheduleTime&&<p>{data.Appointment.scheduleTime[0]}-{data.Appointment.scheduleTime[1]} </p>}
-{data?.Appointment.imgSource&&<Image src={data.Appointment.imgSource} alt={`img-${data.Appointment.imgSource}`} width="50px" height="50px"></Image>}
+{image&&<Image src={image} alt={`img-${data.Appointment.imgSource}`} width="100px" height="100px"></Image>}
   </>
   )
 }

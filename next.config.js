@@ -1,14 +1,14 @@
-const withPWA = require('next-pwa')
-const runtimeCaching = require('next-pwa/cache')
+const withPWA = require("next-pwa");
+const runtimeCaching = require("next-pwa/cache");
 
 module.exports = withPWA({
-  pwa:{
-    disable: process.env.NODE_ENV === 'development',
+  pwa: {
+    disable: process.env.NODE_ENV === "development",
     dest: "public",
     register: true,
-    skipWaiting: true
+    skipWaiting: true,
   },
- webpack: (config, options) => {
+  webpack: (config, options) => {
     config.module.rules.push({
       test: /\.graphql?$/,
       loader: "webpack-graphql-loader",
@@ -16,5 +16,7 @@ module.exports = withPWA({
 
     return config;
   },
-})
-
+  images: {
+    domains: ["firebasestorage.googleapis.com"],
+  },
+});
