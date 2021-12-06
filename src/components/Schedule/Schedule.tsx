@@ -6,32 +6,45 @@ import TimeRangePicker from '@wojtekmaj/react-timerange-picker/dist/entry.nostyl
 import '@wojtekmaj/react-timerange-picker/dist/TimeRangePicker.css';
 import Image from 'next/image'
 import * as S from './styles'
+import { deleteIndexDb, updateIndexDb} from "../../../public/indexdb";
 
-interface Props {
-  scheduleId: string;
+type scheduleData ={
+  scheduleid:number,
+
+  title: string,
+  scheduleDate: string,
+  scheduleTime: string[],
+  imgSource: string,
 }
 
-const Schedule = (props: Props) => {
-  const { scheduleId } = props;
-  const { loading, data } = useAppointmentQuery({
-    variables: {
-      scheduleId,
-    },
-  });
+export type EventType ={
+  eventData: scheduleData
+}
+
+const Schedule = ({eventData}:EventType) => {
+  const {scheduleid,title,scheduleDate,scheduleTime,imgSource}=eventData
+
+  // const { loading, data } = useAppointmentQuery({
+  //   variables: {
+  //     scheduleId,
+  //   },
+  // });
   const [deleteSchedule]=useDeleteScheduleMutation()
   const[updateSchedule]=useUpdateScheduleMutation()
   const [input,setInput]=useState("")
 const [isEditing,setIsEditing] = useState(false)
 const [value, onChange] = React.useState(['00:00', '00:00']);
+
   const onDelete=()=>{
-   
-      deleteSchedule({
-        variables: {
-          scheduleId
-        },
-      });
-    
-      window.location.reload()
+    // db.events.delete(id)
+  
+    deleteIndexDb(scheduleid)
+      // deleteSchedule({
+      //   variables: {
+      //     scheduleId
+      //   },
+      // });
+
     };
 
     const onInputChange=(e:ChangeEvent)=>{
@@ -40,43 +53,47 @@ setInput(target.value)
     }
   let content = <h1>Loading....</h1>
 
-  if(!loading&& data?.Appointment){
-    const newTitle= String(data?.Appointment?.title)
-    const image =  (String(data?.Appointment?.imgSource))
-    console.log("Image: "+image)
+  if( eventData ){
+    //const newTitle= String(data?.Appointment?.title)
+
   content=(
     <>
-  <>{newTitle}</><br/>
-{data?.Appointment.scheduleTime&&<p>{data.Appointment.scheduleTime[0]}-{data.Appointment.scheduleTime[1]} </p>}
-{image&&<Image src={image} alt={`img-${data.Appointment.imgSource}`} width="100px" height="100px"></Image>}
+  <>{title}</><br/>
+{scheduleTime&&<p>{scheduleTime[0]}-{scheduleTime[1]} </p>}
+{imgSource&&<Image src={imgSource} alt={`img-${imgSource}`} width="100px" height="100px"></Image>}
   </>
   )
 }
 useEffect(() => {
-  setInput(data?.Appointment?.title||'');
-}, [data?.Appointment?.title]);
+  setInput(title||'');
+}, [title]);
   return <S.Element>{isEditing?
     <S.InputWrapper>
-  <S.Input placeholder={data?.Appointment?.title} onChange={onInputChange}></S.Input><TimeRangePicker
+  <S.Input placeholder={title} onChange={onInputChange}></S.Input><TimeRangePicker
   disableClock={true}
 onChange={onChange}
 value={value}
 /></S.InputWrapper>:<S.Content>{content}</S.Content>}
-<S.Button onClick={onDelete}>Delete</S.Button><S.Button onClick={() => {
-    
-    
+<S.Button onClick={()=>onDelete()}>Delete</S.Button>
+<S.Button onClick={() => {
+
     if(isEditing===true){
-      updateSchedule({
-        variables: {
-          scheduleId,
-          data: {
-            title:input,
-            scheduleTime: value
-          },
-        },
-      });
-      window.location.reload()
-      console.log("Time Value: "+ JSON.stringify(value))
+      // db.events.update(id, {
+      //   title:input,
+      //       scheduleTime: value
+      // })
+      updateIndexDb(scheduleid,input,value)
+      // updateSchedule({
+      //   variables: {
+      //     scheduleId,
+      //     data: {
+      //       title:input,
+      //       scheduleTime: value
+      //     },
+      //   },
+      // });
+
+      //window.location.reload()
     }
     setIsEditing(!isEditing)
   }

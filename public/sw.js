@@ -1,51 +1,38 @@
 if (!self.define) {
-  const e = (e) => {
-      "require" !== e && (e += ".js");
-      let s = Promise.resolve();
-      return (
-        n[e] ||
-          (s = new Promise(async (s) => {
-            if ("document" in self) {
-              const n = document.createElement("script");
-              (n.src = e), document.head.appendChild(n), (n.onload = s);
-            } else importScripts(e), s();
-          })),
-        s.then(() => {
-          if (!n[e]) throw new Error(`Module ${e} didn’t register its module`);
-          return n[e];
-        })
-      );
-    },
-    s = (s, n) => {
-      Promise.all(s.map(e)).then((e) => n(1 === e.length ? e[0] : e));
-    },
-    n = { require: Promise.resolve(s) };
-  self.define = (s, i, a) => {
-    n[s] ||
-      (n[s] = Promise.resolve().then(() => {
-        let n = {};
-        const c = { uri: location.origin + s.slice(1) };
-        return Promise.all(
-          i.map((s) => {
-            switch (s) {
-              case "exports":
-                return n;
-              case "module":
-                return c;
-              default:
-                return e(s);
-            }
-          })
-        ).then((e) => {
-          const s = a(...e);
-          return n.default || (n.default = s), n;
-        });
-      }));
+  let e,
+    s = {};
+  const n = (n, i) => (
+    (n = new URL(n + ".js", i).href),
+    s[n] ||
+      new Promise((s) => {
+        if ("document" in self) {
+          const e = document.createElement("script");
+          (e.src = n), (e.onload = s), document.head.appendChild(e);
+        } else (e = n), importScripts(n), s();
+      }).then(() => {
+        let e = s[n];
+        if (!e) throw new Error(`Module ${n} didn’t register its module`);
+        return e;
+      })
+  );
+  self.define = (i, a) => {
+    const r =
+      e ||
+      ("document" in self ? document.currentScript.src : "") ||
+      location.href;
+    if (s[r]) return;
+    let t = {};
+    const c = (e) => n(e, r),
+      d = { module: { uri: r }, exports: t, require: c };
+    s[r] = Promise.all(i.map((e) => d[e] || c(e))).then((e) => (a(...e), t));
   };
 }
-define("./sw.js", ["./workbox-4a677df8"], function (e) {
+define(["./workbox-22294e6b"], function (e) {
   "use strict";
-  importScripts(),
+  importScripts(
+    "worker-8ZqtidRk4J3DXmNequyZd.js",
+    "fallback-8ZqtidRk4J3DXmNequyZd.js"
+  ),
     self.skipWaiting(),
     e.clientsClaim(),
     e.precacheAndRoute(
@@ -59,53 +46,62 @@ define("./sw.js", ["./workbox-4a677df8"], function (e) {
           revision: "ebb63ca15bba16b550232b0b0f66c726",
         },
         {
-          url: "/_next/static/chunks/62-bcd5ebdc910627da111e.js",
-          revision: "yWFlmcyofHM41pCJ4zlwv",
+          url: "/_next/static/8ZqtidRk4J3DXmNequyZd/_buildManifest.js",
+          revision: "8ZqtidRk4J3DXmNequyZd",
+        },
+        {
+          url: "/_next/static/8ZqtidRk4J3DXmNequyZd/_ssgManifest.js",
+          revision: "8ZqtidRk4J3DXmNequyZd",
+        },
+        {
+          url: "/_next/static/chunks/66eeed8d-7519faeb8bf221b23098.js",
+          revision: "8ZqtidRk4J3DXmNequyZd",
         },
         {
           url: "/_next/static/chunks/75fc9c18-5c1929f66343f0a636cd.js",
-          revision: "yWFlmcyofHM41pCJ4zlwv",
+          revision: "8ZqtidRk4J3DXmNequyZd",
+        },
+        {
+          url: "/_next/static/chunks/99-74fcbfd8dfd8a61669ae.js",
+          revision: "8ZqtidRk4J3DXmNequyZd",
         },
         {
           url: "/_next/static/chunks/framework-2191d16384373197bc0a.js",
-          revision: "yWFlmcyofHM41pCJ4zlwv",
+          revision: "8ZqtidRk4J3DXmNequyZd",
         },
         {
-          url: "/_next/static/chunks/main-a24fd78f98c3ac5c2849.js",
-          revision: "yWFlmcyofHM41pCJ4zlwv",
+          url: "/_next/static/chunks/main-877ccd2043644fe38ff3.js",
+          revision: "8ZqtidRk4J3DXmNequyZd",
         },
         {
-          url: "/_next/static/chunks/pages/_app-a106c8e4350555e90692.js",
-          revision: "yWFlmcyofHM41pCJ4zlwv",
+          url: "/_next/static/chunks/pages/_app-856d90ba301169c9159e.js",
+          revision: "8ZqtidRk4J3DXmNequyZd",
         },
         {
           url: "/_next/static/chunks/pages/_error-737a04e9a0da63c9d162.js",
-          revision: "yWFlmcyofHM41pCJ4zlwv",
+          revision: "8ZqtidRk4J3DXmNequyZd",
         },
         {
-          url: "/_next/static/chunks/pages/index-065a7995ee8b03220e56.js",
-          revision: "yWFlmcyofHM41pCJ4zlwv",
+          url: "/_next/static/chunks/pages/_offline-e86ca6b58e359807d275.js",
+          revision: "8ZqtidRk4J3DXmNequyZd",
+        },
+        {
+          url: "/_next/static/chunks/pages/index-808b769c3861672c157d.js",
+          revision: "8ZqtidRk4J3DXmNequyZd",
         },
         {
           url: "/_next/static/chunks/polyfills-a40ef1678bae11e696dba45124eadd70.js",
-          revision: "yWFlmcyofHM41pCJ4zlwv",
+          revision: "8ZqtidRk4J3DXmNequyZd",
         },
         {
           url: "/_next/static/chunks/webpack-613fd858cdb9cf2af3be.js",
-          revision: "yWFlmcyofHM41pCJ4zlwv",
+          revision: "8ZqtidRk4J3DXmNequyZd",
         },
         {
-          url: "/_next/static/css/8d4a1bd1ed77dc720864.css",
-          revision: "yWFlmcyofHM41pCJ4zlwv",
+          url: "/_next/static/css/c7b34796969fe536635b.css",
+          revision: "8ZqtidRk4J3DXmNequyZd",
         },
-        {
-          url: "/_next/static/yWFlmcyofHM41pCJ4zlwv/_buildManifest.js",
-          revision: "yWFlmcyofHM41pCJ4zlwv",
-        },
-        {
-          url: "/_next/static/yWFlmcyofHM41pCJ4zlwv/_ssgManifest.js",
-          revision: "yWFlmcyofHM41pCJ4zlwv",
-        },
+        { url: "/_offline", revision: "8ZqtidRk4J3DXmNequyZd" },
         {
           url: "/icons/icon-16x16.png",
           revision: "d24288883f33f1f576726d757d243956",
@@ -126,11 +122,9 @@ define("./sw.js", ["./workbox-4a677df8"], function (e) {
           url: "/icons/icon-maskable-x128.png",
           revision: "937954099b71998b770a9dc91a932f63",
         },
-        { url: "/manifest.json", revision: "d6cea9efee6b09b5ed2e745566124d32" },
-        {
-          url: "/service-worker.js",
-          revision: "30543bfffe1c638f190cc2a0d242aea9",
-        },
+        { url: "/idb.js", revision: "d494e3dae2fab6c9c7125f9ba47236ed" },
+        { url: "/indexdb.js", revision: "9a6b398ec5fb8d3fec2c39f49263a597" },
+        { url: "/manifest.json", revision: "50b377b91493fbc66507cdf7e4f6a7aa" },
       ],
       { ignoreURLParametersMatching: [] }
     ),
@@ -155,6 +149,7 @@ define("./sw.js", ["./workbox-4a677df8"], function (e) {
                   })
                 : s,
           },
+          { handlerDidError: async ({ request: e }) => self.fallback(e) },
         ],
       }),
       "GET"
@@ -165,6 +160,7 @@ define("./sw.js", ["./workbox-4a677df8"], function (e) {
         cacheName: "google-fonts-webfonts",
         plugins: [
           new e.ExpirationPlugin({ maxEntries: 4, maxAgeSeconds: 31536e3 }),
+          { handlerDidError: async ({ request: e }) => self.fallback(e) },
         ],
       }),
       "GET"
@@ -175,6 +171,7 @@ define("./sw.js", ["./workbox-4a677df8"], function (e) {
         cacheName: "google-fonts-stylesheets",
         plugins: [
           new e.ExpirationPlugin({ maxEntries: 4, maxAgeSeconds: 604800 }),
+          { handlerDidError: async ({ request: e }) => self.fallback(e) },
         ],
       }),
       "GET"
@@ -185,6 +182,7 @@ define("./sw.js", ["./workbox-4a677df8"], function (e) {
         cacheName: "static-font-assets",
         plugins: [
           new e.ExpirationPlugin({ maxEntries: 4, maxAgeSeconds: 604800 }),
+          { handlerDidError: async ({ request: e }) => self.fallback(e) },
         ],
       }),
       "GET"
@@ -195,6 +193,7 @@ define("./sw.js", ["./workbox-4a677df8"], function (e) {
         cacheName: "static-image-assets",
         plugins: [
           new e.ExpirationPlugin({ maxEntries: 64, maxAgeSeconds: 86400 }),
+          { handlerDidError: async ({ request: e }) => self.fallback(e) },
         ],
       }),
       "GET"
@@ -205,6 +204,7 @@ define("./sw.js", ["./workbox-4a677df8"], function (e) {
         cacheName: "next-image",
         plugins: [
           new e.ExpirationPlugin({ maxEntries: 64, maxAgeSeconds: 86400 }),
+          { handlerDidError: async ({ request: e }) => self.fallback(e) },
         ],
       }),
       "GET"
@@ -216,6 +216,7 @@ define("./sw.js", ["./workbox-4a677df8"], function (e) {
         plugins: [
           new e.RangeRequestsPlugin(),
           new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+          { handlerDidError: async ({ request: e }) => self.fallback(e) },
         ],
       }),
       "GET"
@@ -227,6 +228,7 @@ define("./sw.js", ["./workbox-4a677df8"], function (e) {
         plugins: [
           new e.RangeRequestsPlugin(),
           new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+          { handlerDidError: async ({ request: e }) => self.fallback(e) },
         ],
       }),
       "GET"
@@ -237,6 +239,7 @@ define("./sw.js", ["./workbox-4a677df8"], function (e) {
         cacheName: "static-js-assets",
         plugins: [
           new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+          { handlerDidError: async ({ request: e }) => self.fallback(e) },
         ],
       }),
       "GET"
@@ -247,6 +250,7 @@ define("./sw.js", ["./workbox-4a677df8"], function (e) {
         cacheName: "static-style-assets",
         plugins: [
           new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+          { handlerDidError: async ({ request: e }) => self.fallback(e) },
         ],
       }),
       "GET"
@@ -257,6 +261,7 @@ define("./sw.js", ["./workbox-4a677df8"], function (e) {
         cacheName: "next-data",
         plugins: [
           new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+          { handlerDidError: async ({ request: e }) => self.fallback(e) },
         ],
       }),
       "GET"
@@ -267,6 +272,7 @@ define("./sw.js", ["./workbox-4a677df8"], function (e) {
         cacheName: "static-data-assets",
         plugins: [
           new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+          { handlerDidError: async ({ request: e }) => self.fallback(e) },
         ],
       }),
       "GET"
@@ -282,6 +288,7 @@ define("./sw.js", ["./workbox-4a677df8"], function (e) {
         networkTimeoutSeconds: 10,
         plugins: [
           new e.ExpirationPlugin({ maxEntries: 16, maxAgeSeconds: 86400 }),
+          { handlerDidError: async ({ request: e }) => self.fallback(e) },
         ],
       }),
       "GET"
@@ -296,6 +303,7 @@ define("./sw.js", ["./workbox-4a677df8"], function (e) {
         networkTimeoutSeconds: 10,
         plugins: [
           new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 86400 }),
+          { handlerDidError: async ({ request: e }) => self.fallback(e) },
         ],
       }),
       "GET"
@@ -307,6 +315,7 @@ define("./sw.js", ["./workbox-4a677df8"], function (e) {
         networkTimeoutSeconds: 10,
         plugins: [
           new e.ExpirationPlugin({ maxEntries: 32, maxAgeSeconds: 3600 }),
+          { handlerDidError: async ({ request: e }) => self.fallback(e) },
         ],
       }),
       "GET"

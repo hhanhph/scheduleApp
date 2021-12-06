@@ -14,6 +14,8 @@ import { gql } from "@apollo/client";
 import Schedule from "../src/components/Schedule";
 import EditSection from "../src/components/EditSection/EditSection";
 import ImageCapture from "../src/components/ImageCapture";
+import PushNoti from "../src/components/PushNoti";
+import { addToIndexDB, displayIndexDb } from "../public/indexdb";
 
 const SchedulePage = () => {
   const defaultDate = new Date();
@@ -24,10 +26,9 @@ const SchedulePage = () => {
     },
   });
 
- 
   const [schedulesId, setSchedulesId] = React.useState<string[]>();
   const [schedules, setSchedules] = React.useState<any>();
-
+  const [noti, setEnableNoti] = React.useState(false);
   const [createSchedule] = useIndexCreateScheduleMutation();
   const onSelectedDay = (d: any) => {
     d = moment(d).format("DD-MM-YYYY");
@@ -37,15 +38,39 @@ const SchedulePage = () => {
   const fillScheduleIds = (data: string[]) => {
     setSchedulesId(data?.slice().sort((a, b) => a.localeCompare(b)));
   };
-
   useEffect(() => {
-    data?.getSchedules &&
-      fillScheduleIds(data?.getSchedules?.map((t: any) => t.scheduleId));
-    data?.getSchedules && setSchedules(data.getSchedules);
-  }, [data?.getSchedules]);
+    if ("Notification" in window) {
+      setEnableNoti(true);
+    }
+  }, []);
+  useEffect(() => {
+    // data?.getSchedules &&
+    //   fillScheduleIds(data?.getSchedules?.map((t: any) => t.scheduleId));
+    // data?.getSchedules && setSchedules(data.getSchedules);
+    displayIndexDb()
+      .then((data) => {
+        data.onsuccess = function () {
+          // store the result of opening the database.
+          setSchedules(data.result);
+        };
+      })
+      .catch((error) => {
+        throw new Error("Can't display data: " + error);
+      });
+  }, [schedules]);
 
-  const onClickAddSchedule = async (appointment:string,value:string[],source:string) => {
-  console.log("URL image source: "+source)
+  const onClickAddSchedule = async (
+    appointment: string,
+    value: string[],
+    source: string
+  ) => {
+    addToIndexDB(appointment, currDate, value, source);
+    // let transaction =await db.transaction('schedules', 'readwrite');
+    // transaction.objectStore("schedules").add( {  title: appointment,
+    //   scheduleDate: currDate,
+    //   scheduleTime: value,
+    //   imgSource: source,})
+
     const result = await createSchedule({
       variables: {
         title: appointment,
@@ -59,14 +84,11 @@ const SchedulePage = () => {
           schedulesId.concat(result.data?.createSchedule?.scheduleId)
         )
       : "";
-    
   };
 
-  const scheduleElements = schedulesId?.map((id) => (
-    <Schedule scheduleId={id} key={id} />
+  const scheduleElements = schedules?.map((event: any) => (
+    <Schedule eventData={event} key={event.id} />
   ));
-
- 
   const body =
     loading ||
     typeof scheduleElements === "undefined" ? null : scheduleElements.length >
@@ -88,11 +110,12 @@ const SchedulePage = () => {
       />
       <S.ScheduleWrapper>
         <S.ScheduleContent>
-    <EditSection onClickAddSchedule={onClickAddSchedule}/>
+          <EditSection onClickAddSchedule={onClickAddSchedule} />
           {body}
         </S.ScheduleContent>
       </S.ScheduleWrapper>
-      <ImageCapture/>
+      <ImageCapture />
+      {noti === true && <PushNoti />}
     </S.CalendarWrapper>
   );
 };

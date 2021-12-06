@@ -3,7 +3,6 @@ import AnimateHeight from "react-animate-height";
 import TimeRangePicker from "@wojtekmaj/react-timerange-picker/dist/entry.nostyle";
 import { storage } from "./firebase";
 import * as S from "./styles";
-import { set } from "mongoose";
 
 const EditSection = ({ onClickAddSchedule }: any) => {
   const [value, onChange] = React.useState(["10:00", "11:00"]);

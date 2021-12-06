@@ -1,5 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/storage";
+import "firebase/firebase-firestore";
+
 const firebaseConfig = {
   apiKey: "AIzaSyB8M-QFS62u8QOo-lnxYfbQkPPDqsCJ1NI",
   authDomain: "pwa-schedule-app-332818.firebaseapp.com",
@@ -16,4 +18,6 @@ if (!firebase.apps.length) {
 }
 
 const storage = firebase.storage();
-export { storage, firebaseApp as default };
+const db = firebase.firestore();
+
+export { storage, db, firebaseApp as default };

@@ -7,7 +7,6 @@ module.exports = withPWA({
     dest: "public",
     register: true,
     skipWaiting: true,
-    runtimeCaching,
   },
   webpack: (config, options) => {
     config.module.rules.push({

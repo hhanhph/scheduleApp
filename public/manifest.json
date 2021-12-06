@@ -1,5 +1,6 @@
 {
     "name": "Schedule Progressive Web App",
+    "id": "/index.tsx",
     "short_name": "Schedule PWA",
     "theme_color": "#004740",
     "background_color": "#ffffff",

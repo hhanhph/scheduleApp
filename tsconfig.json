@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -13,7 +17,21 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/api/graphql.ts", "src/components/Schedule.js", "_document.js", "src/components/ImageCapture/ImageCapture.jsx", "src/components/ImageCapture/ImageCapture.jsx", "src/components/ImageCapture/ImageCapture.js"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "pages/api/graphql.ts",
+    "src/components/Schedule.js",
+    "_document.js",
+    "src/components/ImageCapture/ImageCapture.jsx",
+    "src/components/ImageCapture/ImageCapture.jsx",
+    "src/components/ImageCapture/ImageCapture.js",
+    "public/indexdb.js"
+, "public/idb.js", "src/components/PushNoti/PushNoti.jsx"  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

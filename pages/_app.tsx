@@ -11,34 +11,25 @@ import fetch from "node-fetch"; // Use node-fetch here to allow SSR
 import React from "react";
 import Head from "next/head";
 
+
 const client = new ApolloClient({
   link: new HttpLink({ uri: "/api/graphql", fetch: fetch as any }),
   cache: new InMemoryCache(),
 });
 // This default export is required
 export default function App({ Component, pageProps }: AppProps) {
-  React.useEffect(() => {
-    if(window.indexedDB){
-      console.log('IndexedDB is supported');
-  }
-  var request = window.indexedDB.open("MyTestDatabase", 1);
-  request.onerror = function(event) {
-   console.log("Error creating indexDb")
-  };
-  request.onsuccess = function(event) {
-    console.log("Success creating indexDb")
-  };
-    OneSignal.push(function () {
-      OneSignal.init({
-        appId: "541efcf0-e001-4f95-b7e0-a596777330fb",
-        safari_web_id: "",
-        notifyButton: {
-          enable: true,
-        },
-        subdomainName: "scheduleinfo",
-      });
-    });
-  }, []);
+  // React.useEffect(() => {
+  //   OneSignal.push(function () {
+  //     OneSignal.init({
+  //       appId: "541efcf0-e001-4f95-b7e0-a596777330fb",
+  //       safari_web_id: "",
+  //       notifyButton: {
+  //         enable: true,
+  //       },
+  //       subdomainName: "scheduleinfo",
+  //     });
+  //   });
+  // }, []);
   return (
     <>
       <Head>
@@ -67,7 +58,6 @@ export default function App({ Component, pageProps }: AppProps) {
         />
         <link rel="apple-touch-icon" href="/apple-icon.png"></link>
         <meta name="theme-color" content="#ffffff" />
-        <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js"> </script>
       </Head>
       <ApolloProvider client={client}>
         <Component {...pageProps} />
