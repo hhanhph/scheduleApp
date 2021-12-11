@@ -1,9 +1,9 @@
-type Query {
+type Query{
   Appointment(scheduleId: ID!): Schedule
   getSchedules(scheduleDate: String!): [Schedule!]!
 }
 
-type Mutation {
+type Mutation{
   createSchedule(title: String!,scheduleDate: String!,scheduleTime:[String],imgSource: String): Schedule!
   updateSchedule(scheduleId: ID!, data: UpdateScheduleInput!): Schedule
   deleteSchedule(scheduleId: ID!): Schedule!
@@ -16,7 +16,7 @@ scheduleTime: [String]
 }
 
 scalar Date
-type Schedule @entity {
+type Schedule @entity{
 scheduleId: ID! @id
 title: String! @column,
 scheduleDate: String! @column

@@ -21,14 +21,19 @@ export type EventType ={
   eventData: scheduleData
 }
 
-const Schedule = ({eventData}:EventType) => {
-  const {scheduleid,title,scheduleDate,scheduleTime,imgSource}=eventData
+interface Props {
+  scheduleId: string;
+}
 
-  // const { loading, data } = useAppointmentQuery({
-  //   variables: {
-  //     scheduleId,
-  //   },
-  // });
+// const Schedule = ({eventData}:EventType) => {
+  const Schedule = (props: Props) => {
+  //const {scheduleid,title,scheduleDate,scheduleTime,imgSource}=eventData
+const {scheduleId}=props
+  const { loading, data } = useAppointmentQuery({
+    variables: {
+      scheduleId,
+    },
+  });
   const [deleteSchedule]=useDeleteScheduleMutation()
   const[updateSchedule]=useUpdateScheduleMutation()
   const [input,setInput]=useState("")
@@ -36,15 +41,14 @@ const [isEditing,setIsEditing] = useState(false)
 const [value, onChange] = React.useState(['00:00', '00:00']);
 
   const onDelete=()=>{
-    // db.events.delete(id)
   
-    deleteIndexDb(scheduleid)
-      // deleteSchedule({
-      //   variables: {
-      //     scheduleId
-      //   },
-      // });
-
+    //deleteIndexDb(scheduleid)
+      deleteSchedule({
+        variables: {
+          scheduleId
+        },
+      });
+window.location.reload()
     };
 
     const onInputChange=(e:ChangeEvent)=>{
@@ -53,50 +57,75 @@ setInput(target.value)
     }
   let content = <h1>Loading....</h1>
 
-  if( eventData ){
-    //const newTitle= String(data?.Appointment?.title)
-
-  content=(
-    <>
-  <>{title}</><br/>
-{scheduleTime&&<p>{scheduleTime[0]}-{scheduleTime[1]} </p>}
-{imgSource&&<Image src={imgSource} alt={`img-${imgSource}`} width="100px" height="100px"></Image>}
-  </>
-  )
+//   if( eventData ){
+//   content=(
+//     <>
+//   <>{title}</><br/>
+// {scheduleTime&&<p>{scheduleTime[0]}-{scheduleTime[1]} </p>}
+// {imgSource&&<Image src={imgSource} alt={`img-${imgSource}`} width="100px" height="100px"></Image>}
+//   </>
+//   )
+// }
+if(!loading&& data?.Appointment){
+  const newTitle= String(data?.Appointment?.title)
+  const image =  (String(data?.Appointment?.imgSource))
+  console.log("Image: "+image)
+content=(
+  <>
+<>{newTitle}</><br/>
+{data?.Appointment.scheduleTime&&<p>{data.Appointment.scheduleTime[0]}-{data.Appointment.scheduleTime[1]} </p>}
+{image&&<Image src={image} alt={`img-${data.Appointment.imgSource}`} width="100px" height="100px"></Image>}
+</>
+)
 }
+// useEffect(() => {
+//   setInput(title||'');
+// }, [title]);
 useEffect(() => {
-  setInput(title||'');
-}, [title]);
-  return <S.Element>{isEditing?
-    <S.InputWrapper>
-  <S.Input placeholder={title} onChange={onInputChange}></S.Input><TimeRangePicker
-  disableClock={true}
+  setInput(data?.Appointment?.title||'');
+}, [data?.Appointment?.title]);
+//   return <S.Element>{isEditing?
+//     <S.InputWrapper>
+//   <S.Input placeholder={title} onChange={onInputChange}></S.Input><TimeRangePicker
+//   disableClock={true}
+// onChange={onChange}
+// value={value}
+// /></S.InputWrapper>:<S.Content>{content}</S.Content>}
+// <S.Button onClick={()=>onDelete()}>Delete</S.Button>
+// <S.Button onClick={() => {
+
+//     if(isEditing===true){
+    
+//       updateIndexDb(scheduleid,input,value)
+//     }
+//     setIsEditing(!isEditing)
+//   }
+// }>{isEditing?'Save':'Edit'}</S.Button></S.Element>
+return <S.Element>{isEditing?
+  <S.InputWrapper>
+<S.Input placeholder={data?.Appointment?.title} onChange={onInputChange}></S.Input><TimeRangePicker
+disableClock={true}
 onChange={onChange}
 value={value}
 /></S.InputWrapper>:<S.Content>{content}</S.Content>}
-<S.Button onClick={()=>onDelete()}>Delete</S.Button>
-<S.Button onClick={() => {
-
-    if(isEditing===true){
-      // db.events.update(id, {
-      //   title:input,
-      //       scheduleTime: value
-      // })
-      updateIndexDb(scheduleid,input,value)
-      // updateSchedule({
-      //   variables: {
-      //     scheduleId,
-      //     data: {
-      //       title:input,
-      //       scheduleTime: value
-      //     },
-      //   },
-      // });
-
-      //window.location.reload()
-    }
-    setIsEditing(!isEditing)
+<S.Button onClick={onDelete}>Delete</S.Button><S.Button onClick={() => {
+  
+  
+  if(isEditing===true){
+    updateSchedule({
+      variables: {
+        scheduleId,
+        data: {
+          title:input,
+          scheduleTime: value
+        },
+      },
+    });
+    window.location.reload()
+    console.log("Time Value: "+ JSON.stringify(value))
   }
+  setIsEditing(!isEditing)
+}
 }>{isEditing?'Save':'Edit'}</S.Button></S.Element>
 };
 

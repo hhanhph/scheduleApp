@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import {db} from '../EditSection/firebase'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBell } from '@fortawesome/free-solid-svg-icons'
+import *as S from './styles'
 
 const base64ToUint8Array = base64 => {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4)
@@ -134,18 +137,17 @@ var reg;
   }
 
   return (
-    <>
-      <h1>Push Notification Section</h1>
-      <button onClick={subscribeButtonOnClick} disabled={isSubscribed}>
-        Subscribe
-      </button>
-      <button onClick={unsubscribeButtonOnClick} disabled={!isSubscribed}>
+    <S.SubscribeWrapper>
+     <S.SubscribeBtn onClick={subscribeButtonOnClick} disabled={isSubscribed}>
+      <FontAwesomeIcon icon={faBell} color='#f05d4a' size='3x' />
+      </S.SubscribeBtn>
+      {/* <button onClick={unsubscribeButtonOnClick} disabled={!isSubscribed}>
         Unsubscribe
       </button>
       <button onClick={sendNotificationButtonOnClick} disabled={!isSubscribed}>
         Send Notification
-      </button>
-    </>
+      </button> */}
+    </S.SubscribeWrapper>
   )
 }
 

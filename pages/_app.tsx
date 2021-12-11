@@ -18,18 +18,19 @@ const client = new ApolloClient({
 });
 // This default export is required
 export default function App({ Component, pageProps }: AppProps) {
-  // React.useEffect(() => {
-  //   OneSignal.push(function () {
-  //     OneSignal.init({
-  //       appId: "541efcf0-e001-4f95-b7e0-a596777330fb",
-  //       safari_web_id: "",
-  //       notifyButton: {
-  //         enable: true,
-  //       },
-  //       subdomainName: "scheduleinfo",
-  //     });
-  //   });
-  // }, []);
+  React.useEffect(() => {
+    // OneSignal.push(function () {
+    //   OneSignal.init({
+    //     appId: "541efcf0-e001-4f95-b7e0-a596777330fb",
+    //     safari_web_id: "",
+    //     notifyButton: {
+    //       enable: true,
+    //     },
+    //     subdomainName: "scheduleinfo",
+    //   });
+    // });
+   
+  }, []);
   return (
     <>
       <Head>

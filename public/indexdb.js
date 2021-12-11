@@ -59,9 +59,7 @@ export const addImgToIndexDb = async (img) => {
   const imgReadWriteTransaction = db.transaction("images", "readwrite");
   const newObjectStore = imgReadWriteTransaction.objectStore("images");
 
-  return newObjectStore.add({
-    image: img,
-  });
+  return newObjectStore.add({ image: img });
 };
 
 export async function displayIndexDb() {
@@ -74,7 +72,7 @@ export async function displayIndexDb() {
 
 export async function displayImgIndexDb() {
   const db = await openDatabase();
-  var readTransaction = db.transaction(["images"]);
+  var readTransaction = db.transaction(["images"], "readonly");
   var objectStore = readTransaction.objectStore("images");
   var request = objectStore.getAll();
   return request;
@@ -134,72 +132,3 @@ export const deleteImageIndexDb = async (id) => {
     console.log("Deleted!");
   };
 };
-//////////////////
-// import * as idb from 'idb'
-// const db = idb.default;
-
-// const dbPromise = db.open('indexDatabase', 1, function (upgradeDb) {
-//     /* tslint:disable */
-//     switch (upgradeDb.oldVersion) {
-//       case 0:
-//       // a placeholder case so that the switch block will
-//       // execute when the database is first created
-//       // (oldVersion is 0)
-//       case 1:
-//         upgradeDb.createObjectStore('schedules', { keyPath: 'id' });
-//         const tx = upgradeDb.transaction.objectStore('schedules', 'readwrite')
-//         tx.createIndex("title","title" , { unique: false });
-//         tx.createIndex("scheduleDate","scheduleDate", { unique: false });
-//         tx.createIndex("scheduleTime","scheduleTime", { unique: false });
-//         tx.createIndex("imgSource","imgSource", { unique: false });
-
-//     }
-//   });
-
-// class DBService {
-
-//     get(tablespace, key) {
-//       return dbPromise.then(db => {
-//         return db.transaction(tablespace).objectStore(tablespace).get(key);
-//       }).catch(error => {
-//         // Do something?
-//       });
-//     }
-
-//     getAll(tablespace, indexName, index = []) {
-//       return dbPromise.then(db => {
-//         return db.transaction(tablespace).objectStore(tablespace).index(indexName).getAll(index);
-//       }).catch(error => {
-//         // Do something?
-//       });
-//     }
-
-//     put(tablespace, object, key = null) {
-//       return dbPromise.then(db => {
-//         if (key) {
-//           return db.transaction(tablespace, 'readwrite').objectStore(tablespace).put(object, key);
-//         }
-//         return db.transaction(tablespace, 'readwrite').objectStore(tablespace).put(object);
-//       }).catch(error => {
-//         // Do something?
-//       });
-//     }
-
-//     delete(tablespace, key) {
-//       return dbPromise.then(db => {
-//         return db.transaction(tablespace, 'readwrite').objectStore(tablespace).delete(key);
-//       }).catch(error => {
-//         // Do something?
-//       });
-//     }
-
-//     deleteAll(tablespace) {
-//       return dbPromise.then(db => {
-//         return db.transaction(tablespace, 'readwrite').objectStore(tablespace).clear();
-//       }).catch(error => {
-//         // Do something?
-//       });
-//     }
-//   }
-
-//   export const Service = new DBService()

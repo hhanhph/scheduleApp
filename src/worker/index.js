@@ -1,5 +1,10 @@
 "use strict";
-import { displayImgIndexDb, deleteImageIndexDb } from "../../public/indexdb";
+import {
+  displayImgIndexDb,
+  addToIndexDB,
+  deleteImageIndexDb,
+} from "../../public/indexdb";
+
 import { storage } from "../components/EditSection/firebase";
 self.addEventListener("push", function (event) {
   const data = JSON.parse(event.data.text());
@@ -53,20 +58,32 @@ self.addEventListener("sync", function (event) {
           data.onsuccess = function () {
             // store the result of opening the database.
             console.log("Data: " + JSON.stringify(data.result));
-            for (var img of data.result) {
-              console.log("Uploading...." + JSON.stringify(img.image));
-              var id = new Date().toISOString();
-              storage
+            let savedImages = data.result;
+            for (var img of savedImages) {
+              addToIndexDB("", "", "", img.image);
+              let id = new Date().toISOString;
+              const uploadTask = storage
                 .ref(`/images/${id}`)
-                .put(img.image)
-                .then((snapshot) => {
-                  snapshot.ref.getDownloadURL().then((url) => {
-                    console.log(" * new url", url);
-                  });
-                })
-                .catch((err) => {
-                  console.log("Can't upload blob file to firebase: " + err);
+                .putString(img.image.split(",")[1], "base64", {
+                  contentType: "image/png",
                 });
+              uploadTask.on(
+                "state_changed",
+                (snapshot) => {},
+                (error) => {
+                  console.log(error);
+                },
+                () => {
+                  storage
+                    .ref("images")
+                    .child(id)
+                    .getDownloadURL()
+                    .then((url) => {
+                      console.log("DownloadURL2: " + url);
+                    });
+                }
+              );
+              deleteImageIndexDb(img.imgid);
             }
           };
         })

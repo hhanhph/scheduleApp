@@ -1,14 +1,16 @@
 import React from "react";
 import { Button } from "../EditSection/styles";
 import dataURItoBlob from "./lib/utility";
-import { storage } from "../EditSection/firebase";
-import { addImgToIndexDb } from "../../../public/indexdb";
-const ImageCapture = () => {
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faImage } from '@fortawesome/free-solid-svg-icons'
+import * as S from './styles'
+const ImageCapture = ({newImg}) => {
   const videoRef = React.useRef(null);
-  const inputRef = React.useRef(null);
+  const imgCaptureRef = React.useRef(null);
   const canvasRef = React.useRef(null);
-  var image;
 
+  var image;
+let video = videoRef.current;
   const captureImage = () => {
     canvasRef.current.style.display = "block";
     videoRef.current.style.display = "none";
@@ -28,36 +30,49 @@ const ImageCapture = () => {
     image = dataURItoBlob(canvasRef.current.toDataURL());
 
     uploadFile(image);
-    if(videoPlayer.srcObject){
-      videoPlayer.srcObject.getVideoTracks.forEach(track=>{
-        track.stop();
-      })
-    }
+  
   };
 
-  const uploadFile = async (blob) => {
-    if('serviceWorker' in navigator && 'SyncManager' in window){
-      navigator.serviceWorker.ready.then(sw=>{
-        addImgToIndexDb(blob).then(()=>{
-     
- sw.sync.register('sync-new');
- console.log("SyncManager available")
-        })
-     
-      })
-      //No Syncing available then just send the data to the server
-    }else{
-    var id = new Date().toISOString()
-    const ref = await storage
-      .ref(`/images/${id}`)
-      .put(blob)
-      .then((snapshot) => {
-        snapshot.ref.getDownloadURL().then((url) => {
-          console.log(" * new url", url);
-        });
-      });
-  };
-}
+
+  // const capture=async()=>{
+  //   console.log("capture:"+useFront)
+  //   navigator.mediaDevices
+  //   .getUserMedia( {audio: false, video: true,facingMode: useFront ? 'user' : 'environment'} )
+  //   .then((_stream) => {
+      
+  //     video.style.display = "block";
+  //     if (video) {
+  //       stream =_stream
+  //       video.srcObject = stream;
+  //       video.play();
+  //     }
+  //   })
+  //   .catch((err) => {
+  //     imgCaptureRef.current.style.display = "none";
+  //   });
+  //}
+  // const switchCam =()=>{
+  //   // we need to flip, stop everything
+  //   console.log("Stream"+stream)
+  //   videoRef.current.pause()
+  //   videoRef.current.srcObject?.getVideoTracks().forEach((track) => {
+  //     track.stop();
+  //   });
+  //   videoRef.current.srcObject = null;
+  //  useFront=!useFront
+  //  console.log("front:"+useFront)
+  //   // toggle / flip
+  //   console.log("At switching position")
+  //   capture();
+  // }
+
+  const onChange=(target)=>{
+      if (target.files.length !== 0) {
+//no sync
+newImg(target=target)
+  
+        } 
+  }
   React.useEffect(() => {
     if (!("mediaDevices" in navigator)) {
       navigator.mediaDevices = {};
@@ -74,40 +89,22 @@ const ImageCapture = () => {
         });
       };
     }
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
-      .then((stream) => {
-        let video = videoRef.current;
-        video.style.display = "block";
-        if (video) {
-          video.srcObject = stream;
-        }
-      })
-      .catch((err) => {
-        inputRef.current.style.display = "block";
-      });
-  }, []);
+  
+  },[]);
+
   return (
-    <div>
-      <div width="50%" height="50%">
+    <S.ImgCaptureWrapper ref={imgCaptureRef}>
         <video autoPlay ref={videoRef} style={{ display: "none" }} />
         <canvas ref={canvasRef} width="100%" display="none" />
         <Button onClick={captureImage}>Take a photo</Button>
-        <label htmlFor="file-upload">
-          <i></i> Custom Upload
-        </label>
-        <input
-          ref={inputRef}
-          accept="image/*"
-          id="file-upload"
-          type="file"
-          capture="environment"
-          onChange={() => {}}
-          style={{ display: "none" }}
-        />
-      </div>
+    <div className='button'>
+      <label htmlFor='single'>
+        <FontAwesomeIcon icon={faImage} color='#3B5998' size='10x' />
+      </label>
+      <input type='file' id='single' onChange={(e)=>onChange(e.target)} /> 
     </div>
+        </S.ImgCaptureWrapper>
   );
 };
 
-export default ImageCapture
+export default ImageCapture;
