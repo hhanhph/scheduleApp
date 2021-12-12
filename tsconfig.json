@@ -30,7 +30,7 @@
     "src/components/ImageCapture/ImageCapture.jsx",
     "src/components/ImageCapture/ImageCapture.js",
     "public/indexdb.js"
-, "public/idb.js", "src/components/PushNoti/PushNoti.jsx"  ],
+, "public/idb.js", "src/components/PushNoti/PushNoti.jsx", "src/components/EditSection/EditSection.jsx", "src/components/SlideDrawer/SlideDrawer.jsx"  ],
   "exclude": [
     "node_modules"
   ]

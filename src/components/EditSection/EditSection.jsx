@@ -124,6 +124,7 @@ const EditSection = ({ onClickAddSchedule, isOnMobile }) => {
         aria-expanded={height !== 0}
         aria-controls="example-panel"
         onClick={toggle}
+        id="editBtn"
       >
         {height === 0 ? "Plan new schedule" : "Close"}
       </S.EditButton>
