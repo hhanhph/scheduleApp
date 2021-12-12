@@ -27,72 +27,44 @@ const EditSection = ({ onClickAddSchedule, isOnMobile }) => {
   const OnClickHandle = (appointment, value, source) => {
     if (image) {
       //Background syncing
-    //   if ("serviceWorker" in navigator && "SyncManager" in window) {
-    //     getBase64(image)
-    //       .then((data) => {
-    //         navigator.serviceWorker.ready.then((sw) => {
-    //           addImgToIndexDb(data).then(() => {
-    //             sw.sync.register("sync-new");
-    //             console.log("SyncManager available");
-    //           });
-    //         });
-    //       })
-    //       .catch((error) => {
-    //         throw new Error("Can't convert image to Base64 " + error);
-    //       });
-    //   } else {
-    //     const uploadTask = storage.ref(`/images/${image.name}`).put(image);
-    //     uploadTask.on(
-    //       "state_changed",
-    //       (snapshot) => {},
-    //       (error) => {
-    //         console.log(error);
-    //       },
-    //       () => {
-    //         storage
-    //           .ref("images")
-    //           .child(image.name)
-    //           .getDownloadURL()
-    //           .then((url) => {
-    //             console.log("DownloadURL: " + url);
-    //             setImage(null);
-    //             setSource(url);
-    //             onClickAddSchedule(appointment, value, (source = url));
-    //           });
-    //         setSource("");
-    //         setAppointment("");
-    //       }
-    //     );
-    //   }
-    // } else {
-    //   onClickAddSchedule(appointment, value, "");
-    //   setAppointment("");
-    // }
-    const uploadTask = storage.ref(`/images/${image.name}`).put(image);
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {},
-        (error) => {
-          console.log(error);
-        },
-        () => {
-          storage
-            .ref("images")
-            .child(image.name)
-            .getDownloadURL()
-            .then((url) => {
-              console.log("DownloadURL: " + url);
-              setImage(null);
-              setSource(url);
-              onClickAddSchedule(appointment, value, source=url);
+      if ("serviceWorker" in navigator && "SyncManager" in window) {
+        getBase64(image)
+          .then((data) => {
+            navigator.serviceWorker.ready.then((sw) => {
+              addImgToIndexDb(data).then(() => {
+                sw.sync.register("sync-new");
+                console.log("SyncManager available");
+              });
             });
-            setSource('')
-            setAppointment('')
-        }
-      );
-      
-    }
-    else{
+          })
+          .catch((error) => {
+            throw new Error("Can't convert image to Base64 " + error);
+          });
+      } else {
+        const uploadTask = storage.ref(`/images/${image.name}`).put(image);
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {},
+          (error) => {
+            console.log(error);
+          },
+          () => {
+            storage
+              .ref("images")
+              .child(image.name)
+              .getDownloadURL()
+              .then((url) => {
+                console.log("DownloadURL: " + url);
+                setImage(null);
+                setSource(url);
+                onClickAddSchedule(appointment, value, (source = url));
+              });
+            setSource("");
+            setAppointment("");
+          }
+        );
+      }
+  } else{
       onClickAddSchedule(appointment, value, '')
       setAppointment('')
     }
@@ -124,6 +96,7 @@ const EditSection = ({ onClickAddSchedule, isOnMobile }) => {
         aria-expanded={height !== 0}
         aria-controls="example-panel"
         onClick={toggle}
+        id="editBtn"
       >
         {height === 0 ? "Plan new schedule" : "Close"}
       </S.EditButton>

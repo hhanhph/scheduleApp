@@ -10,7 +10,7 @@
     "types:generate": "graphql-codegen",
     "prepare": "husky install",
     "web-push": "web-push",
-    "analyze": "cross-env ANALYZE=true next build"
+    "cypress": "cypress open"
   },
   "dependencies": {
     "@apollo/client": "^3.4.16",
