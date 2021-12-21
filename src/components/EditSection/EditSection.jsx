@@ -154,7 +154,7 @@ const EditSection = ({ onClickAddSchedule, isOnMobile }) => {
             onChange={(e) => handleCapture(e.target)}
           />
           {isOnMobile && <ImageCapture newImg={handleCapture} />}
-          <S.Button onClick={() => OnClickHandle(appointment, value, source)}>
+          <S.Button id="submitBtn" onClick={() => OnClickHandle(appointment, value, source)}>
             +
           </S.Button>
         </S.Edit>

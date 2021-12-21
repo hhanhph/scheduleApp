@@ -55,7 +55,7 @@ export const EditButton = styled.button`
   }
 `;
 export const UpImgInput = styled.input`
-  display: none;
+  opacity: 0;
 `;
 
 export const UpImgLabel = styled.label`
