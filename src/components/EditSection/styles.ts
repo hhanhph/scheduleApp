@@ -55,13 +55,5 @@ export const EditButton = styled.button`
   }
 `;
 export const UpImgInput = styled.input`
-  display: none;
-`;
-
-export const UpImgLabel = styled.label`
-  border: 1px solid #ccc;
-  display: inline-block;
-  padding: 10px;
-  margin: 8px;
-  cursor: pointer;
+  opacity: 0;
 `;

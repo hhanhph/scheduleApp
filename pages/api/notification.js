@@ -9,21 +9,7 @@ webPush.setVapidDetails(
 const SendNoti = async (req, res) => {
   if (req.method == "POST") {
     const { subscription } = req.body;
-    // db.collection("subscriptions").get().then((querySnapshot) => {
-    //     querySnapshot.forEach((doc) => {
-    //         console.log(`${doc.id} => ${doc.data()}`);
-    //         var subscription = {
-    //           endpoint: doc.data().endpoint,
-    //           keys:{
-    //             auth: doc.data().keys.auth,
-    //             p256dh: doc.data().keys.p256dh
-    //           }
-    //         }
-    //       }
-    //     )
-    //     })
     webPush
-
       .sendNotification(
         subscription,
         JSON.stringify({

@@ -1,8 +1,6 @@
 import React from "react";
 import { Button } from "../EditSection/styles";
 import dataURItoBlob from "./lib/utility";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faImage } from '@fortawesome/free-solid-svg-icons'
 import * as S from './styles'
 const ImageCapture = ({newImg}) => {
   const videoRef = React.useRef(null);
@@ -28,7 +26,6 @@ let video = videoRef.current;
     });
     videoRef.current.srcObject = null;
     image = dataURItoBlob(canvasRef.current.toDataURL());
-
     uploadFile(image);
   
   };
@@ -93,18 +90,13 @@ newImg(target=target)
   },[]);
 
   return (
-    <S.ImgCaptureWrapper ref={imgCaptureRef}>
-        <video autoPlay ref={videoRef} style={{ display: "none" }} />
-        <canvas ref={canvasRef} width="100%" display="none" />
-        <Button onClick={captureImage}>Take a photo</Button>
-    <div className='button'>
-      <label htmlFor='single'>
-        <FontAwesomeIcon icon={faImage} color='#3B5998' size='10x' />
-      </label>
+   <S.ImgBtn className='button'>
+      <S.UploadLabel htmlFor='single'>
+        Upload Image
+      </S.UploadLabel>
       <input type='file' id='single' onChange={(e)=>onChange(e.target)} /> 
-    </div>
-        </S.ImgCaptureWrapper>
-  );
+    </S.ImgBtn>
+);
 };
 
 export default ImageCapture;

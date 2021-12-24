@@ -20,6 +20,39 @@ describe("Homepage", () => {
             const duration = measure.duration;
             assert.isAtMost(duration, 5000);
           });
+        cy.get('button[id="editBtn"]').click();
+        const filepath = "images/test_img.jpg";
+        cy.get('input[id="file-upload"]').attachFile(filepath);
+        cy.get('button[id="submitBtn"]').click();
+        Cypress.on("uncaught:exception", (err, runnable) => {
+          // returning false here prevents Cypress from
+          // failing the test
+          return false;
+        });
+
+        // cy.get(
+        //   '*[class="datepicker-date-day-Item wrapper  date-day-Item-selected"]'
+        // )
+        //   .first()
+        //   .click()
+        //   .then(() => {
+        //     cy.get("img")
+        //       .first()
+        //       .should("be.visible")
+        //       .then(() => performance.mark("load-first-img"))
+        //       .then(() => {
+        //         performance.measure(
+        //           "imgLoad",
+        //           "start-loading",
+        //           "load-first-img"
+        //         );
+        //         // Retrieve the timestamp we just created
+        //         const measure2 = performance.getEntriesByName("imgLoad")[0];
+        //         // This is the total amount of time (in milliseconds) between the start and end
+        //         const duration = measure2.duration;
+        //         assert.isAtMost(duration, 5000);
+        //       });
+        //   });
       });
   });
 });

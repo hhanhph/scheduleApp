@@ -24,9 +24,7 @@ const base64ToUint8Array = base64 => {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-      // run only in browser
-   
-      navigator.serviceWorker.ready.then(reg => {
+        navigator.serviceWorker.ready.then(reg => {
         reg.pushManager.getSubscription().then(sub => {
           if (sub && !(sub.expirationTime && Date.now() > sub.expirationTime - 5 * 60 * 1000)) {
             setSubscription(sub)
@@ -81,29 +79,14 @@ var reg;
   }
 
   const subscribeButtonOnClick = async event => {
-
-  
-    /////Tutor
-    // Notification.requestPermission(result=>{
-    //   console.log('User choice',result);
-    //   if(result !=='granted'){
-    //     console.log('No noti granted')
-    //   }else{
-    //     //displayConfirmNoti()
-    //     configurePushSub()
-    //   }
-    // })
-    ////
     const sub = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: base64ToUint8Array(process.env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY)
-    })
-    // TODO: you should call your API to save subscription data on server in order to send web push notification from server
-  
-   
+    })   
     setSubscription(sub)
     setIsSubscribed(true)
     console.log('web push subscribed!')
+    displayConfirmNoti()
 
     db.collection('subscriptions').doc('scheduleApp').set((sub.toJSON()))
   }

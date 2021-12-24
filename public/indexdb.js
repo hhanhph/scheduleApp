@@ -38,7 +38,6 @@ export const addToIndexDB = async (
 ) => {
   const db = await openDatabase();
   // Add
-
   const scheduleReadWriteTransaction = db.transaction("schedules", "readwrite");
   const newObjectStore = scheduleReadWriteTransaction.objectStore("schedules");
 
