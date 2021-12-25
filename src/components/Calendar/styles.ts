@@ -62,15 +62,18 @@ export const ScheduleContent = styled.div`
     height: 2px;
     width: 10px;
   }
+
   div {
     color: white;
-    padding: 0.5rem;
+    min-width:0;
   }
 `;
 
-export const TableContent = styled.div`
+export const TableContent = styled.table`
   position: relative;
 `;
+
+export const TableBody = styled.tbody``
 
 export const ToggleSlideBtn = styled.button`
 background:none;

@@ -94,8 +94,8 @@ newImg(target=target)
       <S.UploadLabel htmlFor='single'>
         Upload Image
       </S.UploadLabel>
-      <input type='file' id='single' onChange={(e)=>onChange(e.target)} /> 
-    </S.ImgBtn>
+        <S.ImgInput type='file' id='single' accept='images/*' onChange={(e)=>onChange(e.target)} /> 
+        </S.ImgBtn>
 );
 };
 

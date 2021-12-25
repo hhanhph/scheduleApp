@@ -85,9 +85,7 @@ const SchedulePage = ({ toggle }: any) => {
     typeof scheduleElements === "undefined" ? null : scheduleElements.length >
       0 ? (
       <S.TableContent>
-        <table>
-          <tbody>{scheduleElements}</tbody>
-        </table>
+          <S.TableBody>{scheduleElements}</S.TableBody>
       </S.TableContent>
     ) : (
       <div>No ToDos!</div>
@@ -108,8 +106,8 @@ const SchedulePage = ({ toggle }: any) => {
             onClickAddSchedule={onClickAddSchedule}
             isOnMobile={isMobile}
           />
-          {body}
-        </S.ScheduleContent>
+       {body}
+         </S.ScheduleContent>
       </S.ScheduleWrapper>
 
       {noti && <PushNoti />}

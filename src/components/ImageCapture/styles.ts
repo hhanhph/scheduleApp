@@ -7,11 +7,17 @@ position: relative;
 `
 
 export const UploadLabel = styled.label`
+margin: 8px 0;
+width:100%;
   border: 1px solid #ccc;
   display: inline-block;
-  padding: 10px;
-  margin: 8px;
   cursor: pointer;
 `
 
 export const ImgBtn = styled.div``
+
+export const ImgInput = styled.input`
+opacity: 0;
+z-index:-1;
+overflow:hidden;
+position: absolute`

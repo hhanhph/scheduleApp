@@ -12,8 +12,7 @@ justify-content: space-between;
 `
 
 export const Button=styled.button`
-max-width:5rem;
-height:auto;
+min-width: 0.5rem;
 flex: 1 ;
 color: white;
 border-radius: 25px;
@@ -24,7 +23,7 @@ color: grey;
     background-color: #FE8F8F;
     color:white;
 };
-margin: 10px
+margin: 10px;
 `
 
 export const Input=styled.input`
@@ -44,4 +43,8 @@ flex:4;
 export const InputWrapper=styled.div`
 display: flex;
 flex-direction: column;
-flex: 4`
+flex: 4;`
+
+export const ScheduleDetail=styled.div`
+padding:10px
+`

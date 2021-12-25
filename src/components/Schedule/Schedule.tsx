@@ -38,7 +38,7 @@ const Schedule = ({ eventData }: EventType) => {
 
   if (eventData) {
     content = (
-      <>
+      <S.ScheduleDetail>
         <>{title}</>
         <br />
         {scheduleTime && (
@@ -54,7 +54,7 @@ const Schedule = ({ eventData }: EventType) => {
             height="100px"
           ></Image>
         )}
-      </>
+      </S.ScheduleDetail>
     );
   }
 
