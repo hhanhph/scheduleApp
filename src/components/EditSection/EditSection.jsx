@@ -143,17 +143,7 @@ const EditSection = ({ onClickAddSchedule, isOnMobile }) => {
             onChange={onChange}
             value={value}
           />
-          <S.UpImgLabel htmlFor="file-upload">
-            <i></i> Custom Upload
-          </S.UpImgLabel>
-          <S.UpImgInput
-            accept="image/*"
-            id="file-upload"
-            type="file"
-            capture="environment"
-            onChange={(e) => handleCapture(e.target)}
-          />
-          {isOnMobile && <ImageCapture newImg={handleCapture} />}
+          <ImageCapture newImg={handleCapture} />
           <S.Button id="submitBtn" onClick={() => OnClickHandle(appointment, value, source)}>
             +
           </S.Button>

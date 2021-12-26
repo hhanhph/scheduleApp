@@ -6,30 +6,30 @@ import {
 import ReactHorizontalDatePicker from "react-horizontal-strip-datepicker";
 import "react-horizontal-strip-datepicker/dist/ReactHorizontalDatePicker.css";
 import "@wojtekmaj/react-timerange-picker/dist/TimeRangePicker.css";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars } from '@fortawesome/free-solid-svg-icons'
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
+ 
 import * as S from "./styles";
 import moment from "moment";
 import { gql } from "@apollo/client";
-
+ 
 import Schedule from "../Schedule";
 import EditSection from "../EditSection";
 import PushNoti from "../PushNoti";
-
+ 
 import { addToIndexDB, displayIndexDb } from "../../../public/indexdb";
 import { db } from "../EditSection/firebase";
-
-const SchedulePage = ({toggle}:any) => {
+ 
+const SchedulePage = ({ toggle }: any) => {
   const defaultDate = new Date();
   const [currDate, setCurrDate] = React.useState(String(defaultDate));
-  const [isMobile,setIsMobile] = React.useState(false)
+  const [isMobile, setIsMobile] = React.useState(false);
   const { data, loading } = useGetScheduleQuery({
     variables: {
       scheduleDate: currDate,
     },
   });
-
+ 
   const [schedulesId, setSchedulesId] = React.useState<string[]>();
   const [schedules, setSchedules] = React.useState<any>();
   const [noti, setEnableNoti] = React.useState(false);
@@ -38,7 +38,7 @@ const SchedulePage = ({toggle}:any) => {
     d = moment(d).format("DD-MM-YYYY");
     setCurrDate(d);
   };
-
+ 
   const fillScheduleIds = (data: string[]) => {
     setSchedulesId(data?.slice().sort((a, b) => a.localeCompare(b)));
   };
@@ -46,75 +46,55 @@ const SchedulePage = ({toggle}:any) => {
     if ("Notification" in window) {
       setEnableNoti(true);
     }
-    if( (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) ) {
-      setIsMobile(true)
-     }
+    if (
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      )
+    ) {
+      setIsMobile(true);
+    }
   }, []);
-
+ 
   useEffect(() => {
-    data?.getSchedules &&
-      fillScheduleIds(data?.getSchedules?.map((t: any) => t.scheduleId));
-    data?.getSchedules && setSchedules(data.getSchedules);
-   
-    //INDEXDB
-    // displayIndexDb()
-    //   .then((data) => {
-    //     data.onsuccess = function () {
-    //       // store the result of opening the database.
-    //       setSchedules(data.result);
-    //     };
-    //   })
-    //   .catch((error) => {
-    //     throw new Error("Can't display data: " + error);
-    //   });
-  }, [data?.getSchedules]);//INDEXDB schedules in parameter only
-
+    displayIndexDb()
+      .then((data) => {
+        data.onsuccess = function () {
+          // store the result of opening the database.
+          setSchedules(data.result);
+        };
+      })
+      .catch((error) => {
+        throw new Error("Can't display data: " + error);
+      });
+  }, [schedules]);
+ 
   const onClickAddSchedule = async (
     appointment: string,
     value: string[],
     source: string
   ) => {
-      // INDEXDB
-    //addToIndexDB(appointment, currDate, value, source);
-    
-    const result = await createSchedule({
-      variables: {
-        title: appointment,
-        scheduleDate: currDate,
-        scheduleTime: value,
-        imgSource: source,
-      },
-    });
-    schedulesId && result.data
-      ? fillScheduleIds(
-          schedulesId.concat(result.data?.createSchedule?.scheduleId)
-        )
-      : "";
+    addToIndexDB(appointment, currDate, value, source);
   };
-//INDEXDB
-//   const scheduleElements = schedules?.map((event: any) => (
-//  <Schedule eventData={event} key={event.id} />
-//   ));
-const scheduleElements = schedulesId?.map((id) => (
-    <Schedule scheduleId={id} key={id} />
+ 
+  const scheduleElements = schedules?.map((event: any) => (
+    <Schedule scheduleId={event} key={event.id} />
   ));
+ 
   const body =
     loading ||
     typeof scheduleElements === "undefined" ? null : scheduleElements.length >
       0 ? (
       <S.TableContent>
-        <table>
-          <tbody>{scheduleElements}</tbody>
-        </table>
+          <S.TableBody>{scheduleElements}</S.TableBody>
       </S.TableContent>
     ) : (
-      <div id='notodo'>No ToDos!</div>
+      <div>No ToDos!</div>
     );
   return (
     <S.CalendarWrapper>
-        <S.ToggleSlideBtn onClick={toggle}>
-            <FontAwesomeIcon icon={faBars} color='red' size='3x'/>
-   </S.ToggleSlideBtn>
+      <S.ToggleSlideBtn onClick={toggle}>
+        <FontAwesomeIcon icon={faBars} color="red" size="3x" />
+      </S.ToggleSlideBtn>
       <ReactHorizontalDatePicker
         selectedDay={onSelectedDay}
         enableScroll={true}
@@ -122,18 +102,21 @@ const scheduleElements = schedulesId?.map((id) => (
       />
       <S.ScheduleWrapper>
         <S.ScheduleContent>
-          <EditSection onClickAddSchedule={onClickAddSchedule} isOnMobile={isMobile} />
-          {body}
-        </S.ScheduleContent>
+          <EditSection
+            onClickAddSchedule={onClickAddSchedule}
+            isOnMobile={isMobile}
+          />
+       {body}
+         </S.ScheduleContent>
       </S.ScheduleWrapper>
-      
+ 
       {noti && <PushNoti />}
     </S.CalendarWrapper>
   );
 };
-
+ 
 export default SchedulePage;
-
+ 
 gql`
   query GetSchedule($scheduleDate: String!) {
     getSchedules(scheduleDate: $scheduleDate) {

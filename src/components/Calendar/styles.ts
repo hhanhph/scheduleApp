@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { SubscribeWrapper } from "../PushNoti/styles";
-
+ 
 export const CalendarWrapper = styled.div`
   width: 100%;
   height: 100%;
@@ -13,14 +13,14 @@ export const CalendarWrapper = styled.div`
   padding: 2rem 0;
   justify-content: start;
   align-items: center;
-
+ 
   .datepicker-strip {
     margin-top: 3rem;
   }
   .react-timerange-picker__inputGroup {
     text-align: center;
   }
-
+ 
   ${SubscribeWrapper} {
     width: inherit;
     display: flex;
@@ -38,7 +38,7 @@ export const ScheduleWrapper = styled.div`
   padding: 1rem;
   overflow: hidden;
 `;
-
+ 
 export const ScheduleContent = styled.div`
   width: 100%;
   height: 100%;
@@ -48,13 +48,13 @@ export const ScheduleContent = styled.div`
   ::-webkit-scrollbar {
     width: 15px;
   }
-
+ 
   ::-webkit-scrollbar-track {
     background-color: #fcd2d1;
     border-radius: 100px;
     width: 10px;
   }
-
+ 
   ::-webkit-scrollbar-thumb {
     background-color: #fe8f8f;
     box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
@@ -62,16 +62,19 @@ export const ScheduleContent = styled.div`
     height: 2px;
     width: 10px;
   }
+ 
   div {
     color: white;
-    padding: 0.5rem;
+    min-width:0;
   }
 `;
-
-export const TableContent = styled.div`
+ 
+export const TableContent = styled.table`
   position: relative;
 `;
-
+ 
+export const TableBody = styled.tbody``
+ 
 export const ToggleSlideBtn = styled.button`
 background:none;
 border:none;
@@ -80,10 +83,11 @@ top: 1.5rem;
 left:10px;
 min-width: 2rem;
     min-height: 2rem;
-
+ 
     &:hover{
         cursor:pointer;
         svg{
+ 
             color: white
         }
     }
