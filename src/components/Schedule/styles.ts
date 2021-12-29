@@ -13,6 +13,7 @@ justify-content: space-between;
 
 export const Button=styled.button`
 min-width: 0.5rem;
+max-height: 1rem;
 flex: 1 ;
 color: white;
 border-radius: 25px;
@@ -46,5 +47,10 @@ flex-direction: column;
 flex: 4;`
 
 export const ScheduleDetail=styled.div`
-padding:10px
+padding:10px;
+`
+
+export const ImgWrapper=styled.div`
+position: relative;
+left:25%;
 `

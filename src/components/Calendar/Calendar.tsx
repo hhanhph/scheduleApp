@@ -23,7 +23,6 @@ import { db } from "../EditSection/firebase";
 const SchedulePage = ({ toggle }: any) => {
   const defaultDate = new Date();
   const [currDate, setCurrDate] = React.useState(String(defaultDate));
-  const [isMobile, setIsMobile] = React.useState(false);
   const { data, loading } = useGetScheduleQuery({
     variables: {
       scheduleDate: currDate,
@@ -45,13 +44,6 @@ const SchedulePage = ({ toggle }: any) => {
   useEffect(() => {
     if ("Notification" in window) {
       setEnableNoti(true);
-    }
-    if (
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      )
-    ) {
-      setIsMobile(true);
     }
   }, []);
 
@@ -104,7 +96,6 @@ const SchedulePage = ({ toggle }: any) => {
         <S.ScheduleContent>
           <EditSection
             onClickAddSchedule={onClickAddSchedule}
-            isOnMobile={isMobile}
           />
        {body}
          </S.ScheduleContent>

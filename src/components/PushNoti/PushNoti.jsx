@@ -21,14 +21,14 @@ const base64ToUint8Array = base64 => {
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [subscription, setSubscription] = useState(null)
   const [registration, setRegistration] = useState(null)
-
+ 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
         navigator.serviceWorker.ready.then(reg => {
         reg.pushManager.getSubscription().then(sub => {
           if (sub && !(sub.expirationTime && Date.now() > sub.expirationTime - 5 * 60 * 1000)) {
             setSubscription(sub)
-            console.log("Sub: "+sub)
+            console.log("Sub: "+JSON.stringify(sub))
             setIsSubscribed(true)
           }
         })
@@ -54,30 +54,7 @@ const base64ToUint8Array = base64 => {
     }
   }
 
-  const configurePushSub = ()=>{
-    if(!('serviceWorker')in navigator){
-      return
-    }
-var reg;
-    navigator.serviceWorker.ready.then((swreg)=>{
-      reg=swreg
-      swreg.pushManager.getSubscription();
-    })
-    .then((sub)=>{
-      if(sub===null){
-        //Create new subscribtion
-       reg.pushManager.subscribe({
-          userVisibleOnly:true,
-          applicationServerKey: base64ToUint8Array(process.env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY)
-        }).then((newSub)=>{
-          console.log("New sub:"+JSON.stringify(newSub))
-        });
-      }else{
-
-      }
-    })
-  }
-
+ 
   const subscribeButtonOnClick = async event => {
     const sub = await registration.pushManager.subscribe({
       userVisibleOnly: true,
@@ -88,7 +65,8 @@ var reg;
     console.log('web push subscribed!')
     displayConfirmNoti()
 
-    db.collection('subscriptions').doc('scheduleApp').set((sub.toJSON()))
+    db.collection('subscriptions').doc('scheduleApp').set(sub.toJSON())
+    window.location.reload();
   }
 
   const unsubscribeButtonOnClick = async event => {
@@ -101,23 +79,7 @@ var reg;
     console.log('web push unsubscribed!')
   }
 
-  const sendNotificationButtonOnClick = async event => {
-    event.preventDefault()
-    if (subscription == null) {
-      console.error('web push not subscribed')
-      return
-    }
 
-    await fetch('/api/notification', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify({
-        subscription
-      })
-    })
-  }
 
   return (
     <S.SubscribeWrapper>

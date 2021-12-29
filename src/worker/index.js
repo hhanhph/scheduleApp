@@ -1,6 +1,6 @@
 "use strict";
 import {
-  displayImgIndexDb,
+  displayIndexDb,
   addToIndexDB,
   deleteImageIndexDb,
 } from "../../public/indexdb";
@@ -53,14 +53,14 @@ self.addEventListener("sync", function (event) {
   if (event.tag === "sync-new") {
     console.log("Syncing new image");
     event.waitUntil(
-      displayImgIndexDb()
+      displayIndexDb()
         .then((data) => {
           data.onsuccess = function () {
             // store the result of opening the database.
             console.log("Data: " + JSON.stringify(data.result));
-            let savedImages = data.result;
-            for (var img of savedImages) {
-              addToIndexDB("", "", "", img.image);
+            let schedules = data.result;
+            for (var schedule of schedules) {
+              addToIndexDB("", "", "", schedule.image);
               let id = new Date().toISOString;
               const uploadTask = storage
                 .ref(`/images/${id}`)

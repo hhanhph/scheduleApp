@@ -4,15 +4,21 @@ import TimeRangePicker from "@wojtekmaj/react-timerange-picker/dist/entry.nostyl
 import ImageCapture from "../ImageCapture";
 import { storage } from "./firebase";
 import { addImgToIndexDb } from "../../../public/indexdb";
-import { displayImgIndexDb, deleteImageIndexDb } from "../../../public/indexdb";
+import { addToIndexDB } from "../../../public/indexdb";
+import moment from "moment";
 import * as S from "./styles";
 
-const EditSection = ({ onClickAddSchedule, isOnMobile }) => {
+const EditSection = ({ onClickAddSchedule}) => {
   const [value, onChange] = React.useState(["10:00", "11:00"]);
   const [height, setHeight] = React.useState(0);
   const [appointment, setAppointment] = React.useState("");
   const [image, setImage] = React.useState(null);
   const [source, setSource] = React.useState("");
+  
+  const onSelectedDay = () => {
+    var d = moment(new Date()).format("DD-MM-YYYY");
+    return d
+  };
   const toggle = () => {
     setHeight(height === 0 ? "auto" : 0);
   };
@@ -31,7 +37,7 @@ const EditSection = ({ onClickAddSchedule, isOnMobile }) => {
         getBase64(image)
           .then((data) => {
             navigator.serviceWorker.ready.then((sw) => {
-              addImgToIndexDb(data).then(() => {
+              addToIndexDB(appointment,onSelectedDay(),value,data).then(() => {
                 sw.sync.register("sync-new");
                 console.log("SyncManager available");
               });
@@ -80,10 +86,6 @@ const EditSection = ({ onClickAddSchedule, isOnMobile }) => {
           );
         }
 
-        // if (target.files[0].size > 150000) {
-        //   throw new Error(`'${target.files[0].name}' is too large, please pick a smaller file`)
-        // }
-
         setImage(target.files[0]);
       }
     }
@@ -100,8 +102,7 @@ const EditSection = ({ onClickAddSchedule, isOnMobile }) => {
       >
         {height === 0 ? "Plan new schedule" : "Close"}
       </S.EditButton>
-
-      <AnimateHeight id="example-panel" duration={500} height={height}>
+ <AnimateHeight id="example-panel" duration={500} height={height}>
         <S.Edit>
           <S.Input
             type="text"

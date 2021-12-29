@@ -47,12 +47,14 @@ const Schedule = ({ eventData }: EventType) => {
           </p>
         )}
         {imgSource && (
+          <S.InputWrapper>
           <Image
             src={imgSource}
             alt={`img-${imgSource}`}
-            width="100px"
-            height="100px"
+            width="650px"
+            height="300px"
           ></Image>
+          </S.InputWrapper>
         )}
       </S.ScheduleDetail>
     );
