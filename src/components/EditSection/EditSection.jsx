@@ -7,7 +7,7 @@ import { addImgToIndexDb } from "../../../public/indexdb";
 import { displayImgIndexDb, deleteImageIndexDb } from "../../../public/indexdb";
 import * as S from "./styles";
 
-const EditSection = ({ onClickAddSchedule, isOnMobile }) => {
+const EditSection = ({ onClickAddSchedule }) => {
   const [value, onChange] = React.useState(["10:00", "11:00"]);
   const [height, setHeight] = React.useState(0);
   const [appointment, setAppointment] = React.useState("");
@@ -107,10 +107,6 @@ const EditSection = ({ onClickAddSchedule, isOnMobile }) => {
             `'${target.files[0].type}' is not a supported format`
           );
         }
-
-        // if (target.files[0].size > 150000) {
-        //   throw new Error(`'${target.files[0].name}' is too large, please pick a smaller file`)
-        // }
 
         setImage(target.files[0]);
       }

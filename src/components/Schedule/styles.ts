@@ -13,6 +13,7 @@ justify-content: space-between;
  
 export const Button=styled.button`
 min-width: 0.5rem;
+max-height: 1rem;
 flex: 1 ;
 color: white;
 border-radius: 25px;

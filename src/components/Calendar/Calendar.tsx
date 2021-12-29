@@ -38,7 +38,11 @@ const SchedulePage = ({ toggle }: any) => {
     d = moment(d).format("DD-MM-YYYY");
     setCurrDate(d);
   };
- 
+  const { data:any, loading:boolean } = useGetScheduleQuery({
+    variables: {
+      scheduleDate: currDate,
+    },
+  });
   const fillScheduleIds = (data: string[]) => {
     setSchedulesId(data?.slice().sort((a, b) => a.localeCompare(b)));
   };
@@ -46,37 +50,33 @@ const SchedulePage = ({ toggle }: any) => {
     if ("Notification" in window) {
       setEnableNoti(true);
     }
-    if (
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      )
-    ) {
-      setIsMobile(true);
-    }
   }, []);
  
   useEffect(() => {
-    displayIndexDb()
-      .then((data) => {
-        data.onsuccess = function () {
-          // store the result of opening the database.
-          setSchedules(data.result);
-        };
-      })
-      .catch((error) => {
-        throw new Error("Can't display data: " + error);
+    data?.getSchedules &&
+      fillScheduleIds(data?.getSchedules?.map((t: any) => t.scheduleId));
+    data?.getSchedules && setSchedules(data.getSchedules);
+  }, [data?.getSchedules]);
+
+  const onClickAddSchedule = async (appointment:string,value:string[],source:string) => {
+    console.log("URL image source: "+source)
+      const result = await createSchedule({
+        variables: {
+          title: appointment,
+          scheduleDate: currDate,
+          scheduleTime: value,
+          imgSource: source,
+        },
       });
-  }, [schedules]);
+      schedulesId && result.data
+        ? fillScheduleIds(
+            schedulesId.concat(result.data?.createSchedule?.scheduleId)
+          )
+        : "";
+      
+    };
  
-  const onClickAddSchedule = async (
-    appointment: string,
-    value: string[],
-    source: string
-  ) => {
-    addToIndexDB(appointment, currDate, value, source);
-  };
- 
-  const scheduleElements = schedules?.map((event: any) => (
+  const scheduleElements = schedulesId?.map((event: any) => (
     <Schedule scheduleId={event} key={event.id} />
   ));
  
@@ -104,7 +104,6 @@ const SchedulePage = ({ toggle }: any) => {
         <S.ScheduleContent>
           <EditSection
             onClickAddSchedule={onClickAddSchedule}
-            isOnMobile={isMobile}
           />
        {body}
          </S.ScheduleContent>

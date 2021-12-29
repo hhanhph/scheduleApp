@@ -60,21 +60,12 @@ const Schedule = (props: Props) => {
   };
   let content = <h1>Loading....</h1>;
 
-  //   if( eventData ){
-  //   content=(
-  //     <>
-  //   <>{title}</><br/>
-  // {scheduleTime&&<p>{scheduleTime[0]}-{scheduleTime[1]} </p>}
-  // {imgSource&&<Image src={imgSource} alt={`img-${imgSource}`} width="100px" height="100px"></Image>}
-  //   </>
-  //   )
-  // }
   if (!loading && data?.Appointment) {
     const newTitle = String(data?.Appointment?.title);
     const image = String(data?.Appointment?.imgSource);
     console.log("Image: " + image);
     content = (
-      <S.ScheduleDetail>
+      <S.ScheduleDetail id={scheduleId}>
         <>{newTitle}</>
         <br />
         {data?.Appointment.scheduleTime && (
@@ -87,8 +78,8 @@ const Schedule = (props: Props) => {
           <Image
             src={image}
             alt={`img-${data.Appointment.imgSource}`}
-            width="100px"
-            height="100px"
+            width="650px"
+            height="300px"
           ></Image>
         )}
       </S.ScheduleDetail>
