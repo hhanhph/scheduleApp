@@ -1,4 +1,5 @@
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K];
 };
@@ -19,8 +20,8 @@ export type Scalars = {
 };
 
 export type AdditionalEntityFields = {
-  path?: Maybe<Scalars["String"]>;
-  type?: Maybe<Scalars["String"]>;
+  path?: InputMaybe<Scalars["String"]>;
+  type?: InputMaybe<Scalars["String"]>;
 };
 
 export type Mutation = {
@@ -30,9 +31,10 @@ export type Mutation = {
 };
 
 export type MutationCreateScheduleArgs = {
-  imgSource?: Maybe<Scalars["String"]>;
+  imgSource?: InputMaybe<Scalars["String"]>;
+  location?: InputMaybe<Scalars["String"]>;
   scheduleDate: Scalars["String"];
-  scheduleTime?: Maybe<Array<Maybe<Scalars["String"]>>>;
+  scheduleTime?: InputMaybe<Array<InputMaybe<Scalars["String"]>>>;
   title: Scalars["String"];
 };
 
@@ -60,6 +62,7 @@ export type QueryGetSchedulesArgs = {
 
 export type Schedule = {
   imgSource?: Maybe<Scalars["String"]>;
+  location?: Maybe<Scalars["String"]>;
   scheduleDate: Scalars["String"];
   scheduleId: Scalars["ID"];
   scheduleTime?: Maybe<Array<Maybe<Scalars["String"]>>>;
@@ -67,15 +70,16 @@ export type Schedule = {
 };
 
 export type UpdateScheduleInput = {
-  scheduleTime?: Maybe<Array<Maybe<Scalars["String"]>>>;
+  scheduleTime?: InputMaybe<Array<InputMaybe<Scalars["String"]>>>;
   title: Scalars["String"];
 };
 
-import { ObjectId } from "mongodb";
+import { ObjectID } from "mongodb";
 export type ScheduleDbObject = {
   imgSource?: Maybe<string>;
+  location?: Maybe<string>;
   scheduleDate: string;
-  _id: ObjectId;
+  _id: ObjectID;
   scheduleTime?: Maybe<Array<Maybe<string>>>;
   title: string;
 };

@@ -17,13 +17,9 @@ import Schedule from "../Schedule";
 import EditSection from "../EditSection";
 import PushNoti from "../PushNoti";
  
-import { addToIndexDB, displayIndexDb } from "../../../public/indexdb";
-import { db } from "../EditSection/firebase";
- 
 const SchedulePage = ({ toggle }: any) => {
   const defaultDate = new Date();
   const [currDate, setCurrDate] = React.useState(String(defaultDate));
-  const [isMobile, setIsMobile] = React.useState(false);
   const { data, loading } = useGetScheduleQuery({
     variables: {
       scheduleDate: currDate,
@@ -34,6 +30,7 @@ const SchedulePage = ({ toggle }: any) => {
   const [schedules, setSchedules] = React.useState<any>();
   const [noti, setEnableNoti] = React.useState(false);
   const [createSchedule] = useIndexCreateScheduleMutation();
+  
   const onSelectedDay = (d: any) => {
     d = moment(d).format("DD-MM-YYYY");
     setCurrDate(d);
@@ -58,7 +55,7 @@ const SchedulePage = ({ toggle }: any) => {
     data?.getSchedules && setSchedules(data.getSchedules);
   }, [data?.getSchedules]);
 
-  const onClickAddSchedule = async (appointment:string,value:string[],source:string) => {
+  const onClickAddSchedule = async (appointment:string,value:string[],source:string, location:string) => {
     console.log("URL image source: "+source)
       const result = await createSchedule({
         variables: {
@@ -66,6 +63,7 @@ const SchedulePage = ({ toggle }: any) => {
           scheduleDate: currDate,
           scheduleTime: value,
           imgSource: source,
+          location: location
         },
       });
       schedulesId && result.data
@@ -123,6 +121,7 @@ gql`
       title
       scheduleDate
       imgSource
+      location
     }
   }
   mutation IndexCreateSchedule(
@@ -130,12 +129,14 @@ gql`
     $scheduleDate: String!
     $scheduleTime: [String]!
     $imgSource: String
+    $location: String
   ) {
     createSchedule(
       title: $title
       scheduleDate: $scheduleDate
       scheduleTime: $scheduleTime
       imgSource: $imgSource
+      location: $location
     ) {
       scheduleId
     }

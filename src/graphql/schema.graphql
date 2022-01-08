@@ -4,7 +4,7 @@ type Query{
 }
 
 type Mutation{
-  createSchedule(title: String!,scheduleDate: String!,scheduleTime:[String],imgSource: String): Schedule!
+  createSchedule(title: String!,scheduleDate: String!,scheduleTime:[String],imgSource: String, location: String): Schedule!
   updateSchedule(scheduleId: ID!, data: UpdateScheduleInput!): Schedule
   deleteSchedule(scheduleId: ID!): Schedule!
 }
@@ -22,4 +22,5 @@ title: String! @column,
 scheduleDate: String! @column
 scheduleTime: [String] @column
 imgSource: String @column
+location: String @column
 }

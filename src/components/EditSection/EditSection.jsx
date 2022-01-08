@@ -3,8 +3,6 @@ import AnimateHeight from "react-animate-height";
 import TimeRangePicker from "@wojtekmaj/react-timerange-picker/dist/entry.nostyle";
 import ImageCapture from "../ImageCapture";
 import { storage } from "./firebase";
-import { addImgToIndexDb } from "../../../public/indexdb";
-import { displayImgIndexDb, deleteImageIndexDb } from "../../../public/indexdb";
 import * as S from "./styles";
 
 const EditSection = ({ onClickAddSchedule }) => {
@@ -13,6 +11,8 @@ const EditSection = ({ onClickAddSchedule }) => {
   const [appointment, setAppointment] = React.useState("");
   const [image, setImage] = React.useState(null);
   const [source, setSource] = React.useState("");
+  const [location, setLocation] = React.useState("");
+  const geoRef = React.useRef();
   const toggle = () => {
     setHeight(height === 0 ? "auto" : 0);
   };
@@ -24,51 +24,51 @@ const EditSection = ({ onClickAddSchedule }) => {
       reader.onerror = (error) => reject(error);
     });
   }
-  const OnClickHandle = (appointment, value, source) => {
+  const OnClickHandle = (appointment, value, source, location) => {
     if (image) {
       //Background syncing
-    //   if ("serviceWorker" in navigator && "SyncManager" in window) {
-    //     getBase64(image)
-    //       .then((data) => {
-    //         navigator.serviceWorker.ready.then((sw) => {
-    //           addImgToIndexDb(data).then(() => {
-    //             sw.sync.register("sync-new");
-    //             console.log("SyncManager available");
-    //           });
-    //         });
-    //       })
-    //       .catch((error) => {
-    //         throw new Error("Can't convert image to Base64 " + error);
-    //       });
-    //   } else {
-    //     const uploadTask = storage.ref(`/images/${image.name}`).put(image);
-    //     uploadTask.on(
-    //       "state_changed",
-    //       (snapshot) => {},
-    //       (error) => {
-    //         console.log(error);
-    //       },
-    //       () => {
-    //         storage
-    //           .ref("images")
-    //           .child(image.name)
-    //           .getDownloadURL()
-    //           .then((url) => {
-    //             console.log("DownloadURL: " + url);
-    //             setImage(null);
-    //             setSource(url);
-    //             onClickAddSchedule(appointment, value, (source = url));
-    //           });
-    //         setSource("");
-    //         setAppointment("");
-    //       }
-    //     );
-    //   }
-    // } else {
-    //   onClickAddSchedule(appointment, value, "");
-    //   setAppointment("");
-    // }
-    const uploadTask = storage.ref(`/images/${image.name}`).put(image);
+      //   if ("serviceWorker" in navigator && "SyncManager" in window) {
+      //     getBase64(image)
+      //       .then((data) => {
+      //         navigator.serviceWorker.ready.then((sw) => {
+      //           addImgToIndexDb(data).then(() => {
+      //             sw.sync.register("sync-new");
+      //             console.log("SyncManager available");
+      //           });
+      //         });
+      //       })
+      //       .catch((error) => {
+      //         throw new Error("Can't convert image to Base64 " + error);
+      //       });
+      //   } else {
+      //     const uploadTask = storage.ref(`/images/${image.name}`).put(image);
+      //     uploadTask.on(
+      //       "state_changed",
+      //       (snapshot) => {},
+      //       (error) => {
+      //         console.log(error);
+      //       },
+      //       () => {
+      //         storage
+      //           .ref("images")
+      //           .child(image.name)
+      //           .getDownloadURL()
+      //           .then((url) => {
+      //             console.log("DownloadURL: " + url);
+      //             setImage(null);
+      //             setSource(url);
+      //             onClickAddSchedule(appointment, value, (source = url));
+      //           });
+      //         setSource("");
+      //         setAppointment("");
+      //       }
+      //     );
+      //   }
+      // } else {
+      //   onClickAddSchedule(appointment, value, "");
+      //   setAppointment("");
+      // }
+      const uploadTask = storage.ref(`/images/${image.name}`).put(image);
       uploadTask.on(
         "state_changed",
         (snapshot) => {},
@@ -84,17 +84,16 @@ const EditSection = ({ onClickAddSchedule }) => {
               console.log("DownloadURL: " + url);
               setImage(null);
               setSource(url);
-              onClickAddSchedule(appointment, value, source=url);
+              onClickAddSchedule(appointment, value, (source = url), location);
             });
-            setSource('')
-            setAppointment('')
+          setSource("");
+          setAppointment("");
+          setLocation("");
         }
       );
-      
-    }
-    else{
-      onClickAddSchedule(appointment, value, '')
-      setAppointment('')
+    } else {
+      onClickAddSchedule(appointment, value, "");
+      setAppointment("");
     }
   };
   const handleCapture = (target) => {
@@ -107,13 +106,36 @@ const EditSection = ({ onClickAddSchedule }) => {
             `'${target.files[0].type}' is not a supported format`
           );
         }
-
         setImage(target.files[0]);
       }
     }
   };
 
-  React.useEffect(() => {}, [source]);
+  const getCurrentPosition = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        geoRef.current.style.display = "none";
+        fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}&zoom=18&addressdetails=1`
+        )
+          .then((res) => res.json())
+          .then((data) => setLocation(data.display_name));
+      },
+      (err) => {
+        console.log("Error on getting the current position: " + err);
+        geoRef.current.style.display = "inline";
+        alert(
+          "The current position couldn't be detected, please insert position manually"
+        );
+      },
+      { timeout: 3000 }
+    );
+  };
+  React.useEffect(() => {
+    if (!("geolocation" in navigator)) {
+      geoRef.current.display = "none";
+    }
+  }, [source]);
   return (
     <S.EditSection>
       <S.EditButton
@@ -140,7 +162,18 @@ const EditSection = ({ onClickAddSchedule }) => {
             value={value}
           />
           <ImageCapture newImg={handleCapture} />
-          <S.Button id="submitBtn" onClick={() => OnClickHandle(appointment, value, source)}>
+          <S.Button
+            ref={geoRef}
+            id="geoLocationBtn"
+            onClick={getCurrentPosition}
+          >
+            Get current location
+          </S.Button>
+          {location && <S.LocationInput>Location: {location}</S.LocationInput>}
+          <S.Button
+            id="submitBtn"
+            onClick={() => OnClickHandle(appointment, value, source, location)}
+          >
             +
           </S.Button>
         </S.Edit>

@@ -10,15 +10,14 @@ import TimeRangePicker from "@wojtekmaj/react-timerange-picker/dist/entry.nostyl
 import "@wojtekmaj/react-timerange-picker/dist/TimeRangePicker.css";
 import Image from "next/image";
 import * as S from "./styles";
-import { deleteIndexDb, updateIndexDb } from "../../../public/indexdb";
 
 type scheduleData = {
   scheduleid: number;
-
   title: string;
   scheduleDate: string;
   scheduleTime: string[];
   imgSource: string;
+  location?: string;
 };
 
 export type EventType = {
@@ -29,9 +28,7 @@ interface Props {
   scheduleId: string;
 }
 
-// const Schedule = ({eventData}:EventType) => {
 const Schedule = (props: Props) => {
-  //const {scheduleid,title,scheduleDate,scheduleTime,imgSource}=eventData
   const { scheduleId } = props;
   const { loading, data } = useAppointmentQuery({
     variables: {
@@ -45,7 +42,6 @@ const Schedule = (props: Props) => {
   const [value, onChange] = React.useState(["00:00", "00:00"]);
 
   const onDelete = () => {
-    //deleteIndexDb(scheduleid)
     deleteSchedule({
       variables: {
         scheduleId,
@@ -63,7 +59,8 @@ const Schedule = (props: Props) => {
   if (!loading && data?.Appointment) {
     const newTitle = String(data?.Appointment?.title);
     const image = String(data?.Appointment?.imgSource);
-    console.log("Image: " + image);
+    const location = String(data?.Appointment?.location);
+    console.log("Location: "+location)
     content = (
       <S.ScheduleDetail id={scheduleId}>
         <>{newTitle}</>
@@ -82,32 +79,15 @@ const Schedule = (props: Props) => {
             height="300px"
           ></Image>
         )}
+        {location != null && <p>Location: {location}</p>}
       </S.ScheduleDetail>
     );
   }
-  // useEffect(() => {
-  //   setInput(title||'');
-  // }, [title]);
+
   useEffect(() => {
     setInput(data?.Appointment?.title || "");
   }, [data?.Appointment?.title]);
-  //   return <S.Element>{isEditing?
-  //     <S.InputWrapper>
-  //   <S.Input placeholder={title} onChange={onInputChange}></S.Input><TimeRangePicker
-  //   disableClock={true}
-  // onChange={onChange}
-  // value={value}
-  // /></S.InputWrapper>:<S.Content>{content}</S.Content>}
-  // <S.Button onClick={()=>onDelete()}>Delete</S.Button>
-  // <S.Button onClick={() => {
 
-  //     if(isEditing===true){
-
-  //       updateIndexDb(scheduleid,input,value)
-  //     }
-  //     setIsEditing(!isEditing)
-  //   }
-  // }>{isEditing?'Save':'Edit'}</S.Button></S.Element>
   return (
     <S.Element>
       {isEditing ? (
@@ -159,6 +139,7 @@ gql`
       scheduleDate
       scheduleTime
       imgSource
+      location
     }
   }
 

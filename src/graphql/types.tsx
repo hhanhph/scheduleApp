@@ -7,6 +7,7 @@ import { gql } from "@apollo/client";
 import * as ApolloReactCommon from "@apollo/client";
 import * as ApolloReactHooks from "@apollo/client";
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K];
 };
@@ -37,9 +38,10 @@ export type Mutation = {
 };
 
 export type MutationCreateScheduleArgs = {
-  imgSource?: Maybe<Scalars["String"]>;
+  imgSource?: InputMaybe<Scalars["String"]>;
+  location?: InputMaybe<Scalars["String"]>;
   scheduleDate: Scalars["String"];
-  scheduleTime?: Maybe<Array<Maybe<Scalars["String"]>>>;
+  scheduleTime?: InputMaybe<Array<InputMaybe<Scalars["String"]>>>;
   title: Scalars["String"];
 };
 
@@ -67,6 +69,7 @@ export type QueryGetSchedulesArgs = {
 
 export type Schedule = {
   imgSource?: Maybe<Scalars["String"]>;
+  location?: Maybe<Scalars["String"]>;
   scheduleDate: Scalars["String"];
   scheduleId: Scalars["ID"];
   scheduleTime?: Maybe<Array<Maybe<Scalars["String"]>>>;
@@ -74,7 +77,7 @@ export type Schedule = {
 };
 
 export type UpdateScheduleInput = {
-  scheduleTime?: Maybe<Array<Maybe<Scalars["String"]>>>;
+  scheduleTime?: InputMaybe<Array<InputMaybe<Scalars["String"]>>>;
   title: Scalars["String"];
 };
 
@@ -99,7 +102,7 @@ export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
   args: TArgs,
   context: TContext,
   info: GraphQLResolveInfo
-) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
+) => AsyncIterable<TResult> | Promise<AsyncIterable<TResult>>;
 
 export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -263,6 +266,7 @@ export type ScheduleResolvers<
     ParentType,
     ContextType
   >;
+  location?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   scheduleDate?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   scheduleId?: Resolver<ResolversTypes["ID"], ParentType, ContextType>;
   scheduleTime?: Resolver<
@@ -291,14 +295,18 @@ export type GetScheduleQuery = {
     title: string;
     scheduleDate: string;
     imgSource?: string | null | undefined;
+    location?: string | null | undefined;
   }>;
 };
 
 export type IndexCreateScheduleMutationVariables = Exact<{
   title: Scalars["String"];
   scheduleDate: Scalars["String"];
-  scheduleTime: Array<Maybe<Scalars["String"]>> | Maybe<Scalars["String"]>;
-  imgSource?: Maybe<Scalars["String"]>;
+  scheduleTime:
+    | Array<InputMaybe<Scalars["String"]>>
+    | InputMaybe<Scalars["String"]>;
+  imgSource?: InputMaybe<Scalars["String"]>;
+  location?: InputMaybe<Scalars["String"]>;
 }>;
 
 export type IndexCreateScheduleMutation = {
@@ -316,6 +324,7 @@ export type AppointmentQuery = {
         scheduleDate: string;
         scheduleTime?: Array<string | null | undefined> | null | undefined;
         imgSource?: string | null | undefined;
+        location?: string | null | undefined;
       }
     | null
     | undefined;
@@ -351,6 +360,7 @@ export const GetScheduleDocument = gql`
       title
       scheduleDate
       imgSource
+      location
     }
   }
 `;
@@ -409,12 +419,14 @@ export const IndexCreateScheduleDocument = gql`
     $scheduleDate: String!
     $scheduleTime: [String]!
     $imgSource: String
+    $location: String
   ) {
     createSchedule(
       title: $title
       scheduleDate: $scheduleDate
       scheduleTime: $scheduleTime
       imgSource: $imgSource
+      location: $location
     ) {
       scheduleId
     }
@@ -442,6 +454,7 @@ export type IndexCreateScheduleMutationFn = ApolloReactCommon.MutationFunction<
  *      scheduleDate: // value for 'scheduleDate'
  *      scheduleTime: // value for 'scheduleTime'
  *      imgSource: // value for 'imgSource'
+ *      location: // value for 'location'
  *   },
  * });
  */
@@ -474,6 +487,7 @@ export const AppointmentDocument = gql`
       scheduleDate
       scheduleTime
       imgSource
+      location
     }
   }
 `;

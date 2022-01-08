@@ -65,3 +65,8 @@ export const UpImgLabel = styled.label`
   margin: 8px;
   cursor: pointer;
 `;
+
+export const LocationInput = styled.div`
+margin: 8px 0;
+color: white;
+`
