@@ -54,6 +54,11 @@ export const EditButton = styled.button`
     color: white;
   }
 `;
+
 export const UpImgInput = styled.input`
   opacity: 0;
 `;
+
+export const LocationInput = styled.div`
+margin: 8px 0;
+color:white`

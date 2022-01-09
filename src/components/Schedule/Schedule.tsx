@@ -12,7 +12,8 @@ type scheduleData = {
   title: string;
   scheduleDate: string;
   scheduleTime: string[];
-  imgSource: string;
+  imgSource?: string;
+  location?: string
 };
 
 export type EventType = {
@@ -20,7 +21,7 @@ export type EventType = {
 };
 
 const Schedule = ({ eventData }: EventType) => {
-  const { scheduleid, title, scheduleDate, scheduleTime, imgSource } =
+  const { scheduleid, title, scheduleDate, scheduleTime, imgSource, location } =
     eventData;
   const [input, setInput] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -56,6 +57,8 @@ const Schedule = ({ eventData }: EventType) => {
           ></Image>
           </S.InputWrapper>
         )}
+        {location&&
+        <p>Location: {location}</p>}
       </S.ScheduleDetail>
     );
   }

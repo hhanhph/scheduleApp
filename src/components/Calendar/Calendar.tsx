@@ -18,7 +18,6 @@ import EditSection from "../EditSection";
 import PushNoti from "../PushNoti";
 
 import { addToIndexDB, displayIndexDb } from "../../../public/indexdb";
-import { db } from "../EditSection/firebase";
 
 const SchedulePage = ({ toggle }: any) => {
   const defaultDate = new Date();
@@ -63,9 +62,10 @@ const SchedulePage = ({ toggle }: any) => {
   const onClickAddSchedule = async (
     appointment: string,
     value: string[],
-    source: string
+    source: string,
+    location: string
   ) => {
-    addToIndexDB(appointment, currDate, value, source);
+    addToIndexDB(appointment, currDate, value, source, location);
   };
 
   const scheduleElements = schedules?.map((event: any) => (
@@ -107,29 +107,3 @@ const SchedulePage = ({ toggle }: any) => {
 };
 
 export default SchedulePage;
-
-gql`
-  query GetSchedule($scheduleDate: String!) {
-    getSchedules(scheduleDate: $scheduleDate) {
-      scheduleId
-      title
-      scheduleDate
-      imgSource
-    }
-  }
-  mutation IndexCreateSchedule(
-    $title: String!
-    $scheduleDate: String!
-    $scheduleTime: [String]!
-    $imgSource: String
-  ) {
-    createSchedule(
-      title: $title
-      scheduleDate: $scheduleDate
-      scheduleTime: $scheduleTime
-      imgSource: $imgSource
-    ) {
-      scheduleId
-    }
-  }
-`;

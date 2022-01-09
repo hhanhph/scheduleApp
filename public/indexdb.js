@@ -26,6 +26,7 @@ export async function openDatabase() {
         unique: false,
       });
       imgObjectStore.createIndex("image", "image", { unique: false });
+      imgObjectStore.createIndex("location", "location", { unique: false });
     };
   });
 }
@@ -34,7 +35,8 @@ export const addToIndexDB = async (
   appointment,
   scheduleDate,
   scheduleTime,
-  imgSource
+  imgSource,
+  location
 ) => {
   const db = await openDatabase();
   // Add
@@ -46,6 +48,7 @@ export const addToIndexDB = async (
     scheduleDate: scheduleDate,
     scheduleTime: scheduleTime,
     imgSource: imgSource,
+    location: location,
   });
 
   scheduleReadWriteTransaction.onsuccess = function (event) {
