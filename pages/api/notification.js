@@ -23,7 +23,6 @@ const SendNoti = async (req, res) => {
     //     )
     //     })
     webPush
-
       .sendNotification(
         subscription,
         JSON.stringify({
@@ -43,32 +42,6 @@ const SendNoti = async (req, res) => {
           res.end();
         }
       });
-    //   db.collection("subscriptions").get().then((querySnapshot) => {
-    //     querySnapshot.forEach((doc) => {
-    //         console.log(`${doc.id} => ${doc.data()}`);
-    //         var subscription = {
-    //           endpoint: doc.data().endpoint,
-    //           keys:{
-    //             auth: doc.data().keys.auth,
-    //             p256dh: doc.data().keys.p256dh
-    //           }
-    //         }
-    //         webPush
-    //         .sendNotification(subscription, JSON.stringify({title: 'Hello Web Push', message: 'Your web push notification is here!'}))
-    //         .then(response => {
-    //           res.writeHead(response.statusCode, response.headers).end(response.body)
-    //         })
-    //         .catch(err => {
-    //           if ('statusCode' in err) {
-    //             res.writeHead(err.statusCode, err.headers).end(err.body)
-    //           } else {
-    //             console.error(err)
-    //             res.statusCode = 500
-    //             res.end()
-    //           }
-    //         })
-    //     });
-    // });
   } else {
     res.statusCode = 405;
     res.end();
